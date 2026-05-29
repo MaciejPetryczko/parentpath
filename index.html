@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#F7F7F7;--w:#FFF;--ink:#1B1B1B;--i2:#4B4B4B;--i3:#9B9B9B;
+--G:#58CC02;--Gd:#46A302;--Gs:#D7F5B1;--Gb:#F0FAE4;
+--B:#1CB0F6;--Bd:#0E8FC2;--Bs:#D0EFFD;
+--P:#A855F7;--Ps:#EFD8FF;--Pb:#FAF0FF;
+--O:#FF9600;--Od:#CC7800;--Ob:#FFF8EC;
+--R:#FF4B4B;--Rs:#FFD0D0;
+--br:#E5E5E5;
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);margin:0}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg)}
+.scr{display:none;flex-direction:column;min-height:100vh;animation:ri .2s ease}
+.scr.on{display:flex}
+@keyframes ri{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.scroll{flex:1;overflow-y:auto;padding:0 16px 96px}
+.scroll::-webkit-scrollbar{display:none}
+
+/* NAV */
+.nav{position:sticky;bottom:0;background:var(--w);border-top:2px solid var(--br);display:flex;padding:8px 0 14px;z-index:50}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;font-family:'Nunito',sans-serif;font-size:10px;font-weight:700;color:var(--i3);cursor:pointer;padding:4px 0;transition:color .15s}
+.nb.on{color:var(--G)}
+.nb svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;padding:14px 22px;border-radius:24px;border:none;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:transform .1s,box-shadow .1s;width:100%;margin-bottom:8px;letter-spacing:.3px;text-transform:uppercase}
+.btn:active{transform:translateY(3px)}
+.bg{background:var(--G);color:#fff;box-shadow:0 4px 0 var(--Gd)}.bg:active{box-shadow:none}
+.bg:disabled{background:#AFAFAF;box-shadow:0 4px 0 #888;cursor:not-allowed;transform:none}
+.bb{background:var(--B);color:#fff;box-shadow:0 4px 0 var(--Bd)}.bb:active{box-shadow:none}
+.bp{background:var(--P);color:#fff;box-shadow:0 4px 0 #7C3AED}.bp:active{box-shadow:none}
+.bk{background:var(--w);color:var(--i2);box-shadow:0 4px 0 var(--br);border:2px solid var(--br)}.bk:active{box-shadow:none}
+
+/* ONBOARDING */
+.ob{flex:1;display:flex;flex-direction:column;padding:20px 20px 28px}
+.ob-prog{height:12px;background:var(--br);border-radius:6px;margin-bottom:24px;overflow:hidden}
+.ob-pf{height:100%;background:var(--G);border-radius:6px;transition:width .4s}
+.os{display:none;flex-direction:column;flex:1;animation:ri .2s}
+.os.on{display:flex}
+.oe{font-size:64px;text-align:center;margin-bottom:14px;line-height:1}
+.ot{font-size:23px;font-weight:900;text-align:center;line-height:1.3;margin-bottom:7px}
+.os2{font-size:14px;font-weight:600;color:var(--i2);text-align:center;line-height:1.55;margin-bottom:22px}
+.sp{flex:1}
+
+/* AGE GRID */
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.ab{padding:16px 10px;border:3px solid var(--br);border-radius:16px;background:var(--w);cursor:pointer;text-align:center;font-family:'Nunito',sans-serif;box-shadow:0 3px 0 var(--br);transition:all .15s}
+.ab.on{border-color:var(--B);background:var(--Bs);box-shadow:0 3px 0 var(--Bd)}
+.ab-e{font-size:30px;display:block;margin-bottom:5px}
+.ab-r{font-size:17px;font-weight:900}
+.ab-l{font-size:11px;font-weight:700;color:var(--i3);margin-top:2px}
+.ab.on .ab-r{color:var(--Bd)}
+
+/* MULTI-SELECT LIST */
+.ml{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.mb2{padding:13px 15px;border:3px solid var(--br);border-radius:12px;background:var(--w);cursor:pointer;display:flex;align-items:center;gap:12px;font-family:'Nunito',sans-serif;box-shadow:0 3px 0 var(--br);transition:all .15s;text-align:left}
+.mb2.on{border-color:var(--G);background:var(--Gb);box-shadow:0 3px 0 var(--Gd)}
+.me{font-size:22px;flex-shrink:0}
+.mt{font-size:14px;font-weight:700;flex:1}
+.mc{width:22px;height:22px;border-radius:50%;background:var(--G);display:none;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:900;flex-shrink:0;border:2px solid var(--Gd)}
+.mb2.on .mc{display:flex}
+.other-in{width:100%;padding:10px 12px;border:2px solid var(--br);border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--ink);background:var(--bg);outline:none;margin-top:8px;display:none}
+.mb2.on .other-in{display:block}
+.other-in:focus{border-color:var(--B)}
+/* DAILY FACT */
+.czy-card{border-radius:20px;margin-bottom:14px;overflow:hidden;border:3px solid var(--Od);box-shadow:0 3px 0 var(--Od)}
+.czy-head{background:var(--O);padding:13px 17px;display:flex;align-items:center;justify-content:space-between}
+.czy-hl{display:flex;align-items:center;gap:8px}
+.czy-icon{font-size:22px}
+.czy-htxt{font-size:13px;font-weight:900;color:#fff;letter-spacing:.2px}
+.czy-badge{background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.4);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:800;color:#fff}
+.czy-body{background:var(--Ob);padding:15px 17px}
+.czy-fact{font-size:14px;font-weight:700;color:var(--ink);line-height:1.7;margin-bottom:10px}
+.czy-source{font-size:11px;font-weight:700;color:var(--Od);display:flex;align-items:center;gap:5px}
+.czy-next{font-size:11px;font-weight:700;color:var(--i3);margin-top:9px;display:flex;align-items:center;gap:4px}
+.ld-wrap{position:relative;width:120px;height:120px;margin:0 auto 28px;display:flex;align-items:center;justify-content:center}
+.ld-ring{position:absolute;inset:0;border-radius:50%;border:4px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin 1.4s linear infinite}
+.ld-ring.r2{inset:14px;border-width:3px;border-top-color:rgba(255,255,255,.6);animation:spin 2s linear infinite reverse}
+.ld-center{font-size:40px;animation:pulse2 2s ease-in-out infinite;position:relative;z-index:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse2{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.tip-box{display:none;margin-top:10px;background:var(--w);border:2px solid var(--B);border-radius:12px;padding:11px 13px;animation:ri .18s ease}
+.tip-box.sh{display:block}
+.tip-label{font-size:10px;font-weight:900;color:var(--Bd);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.tip-label::before{content:'💡';font-size:12px}
+.tip-text{font-size:13px;font-weight:600;color:var(--i2);line-height:1.65}
+
+/* PERSONALIZATION */
+.pers-card{background:var(--G);border-radius:20px;padding:22px;margin-bottom:16px;border:3px solid var(--Gd);box-shadow:0 5px 0 var(--Gd)}
+.pers-label{font-size:11px;font-weight:800;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.pers-age{font-size:26px;font-weight:900;color:#fff;margin-bottom:10px}
+.pers-dev{font-size:14px;font-weight:600;color:rgba(255,255,255,.9);line-height:1.65}
+.pers-goals{background:var(--w);border:2.5px solid var(--br);border-radius:16px;padding:15px;margin-bottom:14px;box-shadow:0 2px 0 var(--br)}
+.pers-g-title{font-size:11px;font-weight:800;color:var(--i2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.3px}
+.pers-g-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:2px solid var(--bg)}
+.pers-g-item:last-child{border-bottom:none}
+.pers-dot{width:8px;height:8px;border-radius:50%;background:var(--G);flex-shrink:0;margin-top:5px}
+.pers-g-text{font-size:14px;font-weight:600;color:var(--ink);line-height:1.5}
+.pers-note{background:var(--Bs);border:2px solid var(--Bd);border-radius:12px;padding:13px;font-size:13px;font-weight:600;color:var(--Bd);line-height:1.65;margin-bottom:16px}
+
+/* PHILOSOPHY */
+.philo-card{background:var(--w);border:2.5px solid var(--br);border-radius:16px;padding:16px;margin-bottom:10px;box-shadow:0 2px 0 var(--br);display:flex;gap:14px;align-items:flex-start}
+.philo-icon{font-size:28px;flex-shrink:0;margin-top:2px}
+.philo-t{font-size:15px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.philo-s{font-size:13px;font-weight:600;color:var(--i2);line-height:1.6}
+
+/* TOPBAR */
+.tb{padding:18px 18px 0;display:flex;align-items:center;justify-content:space-between}
+.av{width:40px;height:40px;border-radius:50%;background:var(--G);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;border:3px solid var(--Gd)}
+.back{display:flex;align-items:center;gap:4px;background:none;border:none;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:var(--i2);cursor:pointer;padding:8px;border-radius:8px}
+.back svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+/* ETAP CARD */
+.ec{background:var(--G);border-radius:16px;overflow:hidden;margin-bottom:14px;border:3px solid var(--Gd)}
+.ec-t{padding:18px 18px 14px}
+.ec-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.22);border-radius:20px;padding:4px 11px;margin-bottom:10px}
+.ec-dot{width:6px;height:6px;border-radius:50%;background:#fff}
+.ec-tl{font-size:11px;color:#fff;font-weight:800}
+.ec-ti{font-size:20px;font-weight:900;color:#fff;line-height:1.25;margin-bottom:4px}
+.ec-s{font-size:13px;color:rgba(255,255,255,.82);font-weight:600}
+.ec-sep{height:2px;background:rgba(255,255,255,.18);margin:0 18px}
+.ec-wks{padding:12px 18px 14px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.wk{border-radius:10px;padding:10px 6px;text-align:center}
+.wd{background:rgba(255,255,255,.18)}.wc{background:#fff}.wf{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.18)}
+.wn{font-size:16px;font-weight:900;line-height:1}
+.wnd{color:rgba(255,255,255,.75)}.wnc{color:var(--Gd)}.wnf{color:rgba(255,255,255,.28)}
+.wl{font-size:10px;margin-top:3px;font-weight:700;line-height:1.3}
+.wld{color:rgba(255,255,255,.55)}.wlc{color:var(--Gd)}.wlf{color:rgba(255,255,255,.22)}
+.wck{font-size:10px;margin-top:2px;color:rgba(255,255,255,.55);font-weight:700}
+.ec-bot{padding:10px 18px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.12)}
+.ec-nx{font-size:11px;color:rgba(255,255,255,.65);font-weight:700}
+.ec-nx strong{color:#fff}
+.ec-nt{font-size:11px;color:rgba(255,255,255,.4);font-weight:700}
+
+/* CHECK-IN — 2x2 */
+.ci{background:var(--w);border:2px solid var(--br);border-radius:16px;padding:17px;margin-bottom:14px;box-shadow:0 2px 0 var(--br);overflow:hidden}
+.ci-q{font-size:15px;font-weight:800;margin-bottom:12px}
+.ci-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.co{padding:12px 8px;border:2.5px solid var(--br);border-radius:12px;background:var(--bg);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--i2);cursor:pointer;text-align:center;transition:all .15s;line-height:1.3}
+.co .em{font-size:22px;display:block;margin-bottom:4px}
+.co.on{border-color:var(--B);background:var(--Bs);color:var(--Bd)}
+.ci-r{margin-top:11px;padding:11px 13px;background:var(--Bs);border-radius:8px;font-size:13px;font-weight:700;color:var(--Bd);line-height:1.5;display:none}
+
+/* TASKS */
+.th{display:flex;align-items:center;justify-content:space-between;margin:20px 0 10px}
+.th-t{font-size:17px;font-weight:900}
+.th-c{background:var(--Gs);color:var(--Gd);font-size:12px;font-weight:800;padding:4px 10px;border-radius:20px;border:2px solid var(--Gd)}
+.tc{background:var(--w);border:2.5px solid var(--br);border-radius:16px;margin-bottom:10px;overflow:hidden;box-shadow:0 2px 0 var(--br);transition:opacity .3s}
+.tc.fd{opacity:.52}
+.tcm{display:flex;align-items:flex-start;gap:12px;padding:13px 15px 11px}
+.chk{width:26px;height:26px;border-radius:8px;border:3px solid #CCC;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;margin-top:1px}
+.chk.dn{background:var(--G);border-color:var(--Gd);color:#fff;box-shadow:0 2px 0 var(--Gd)}
+.tcb{flex:1;min-width:0}
+.tct{font-size:14px;font-weight:800;line-height:1.45}
+.tct.dn{text-decoration:line-through;color:var(--i3)}
+.tcm2{display:flex;align-items:center;gap:7px;margin-top:5px;flex-wrap:wrap}
+.tt2{font-size:11px;font-weight:700;color:var(--i3)}
+.ttag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:800;background:var(--Gs);color:var(--Gd)}
+.wb{background:none;border:none;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:var(--B);cursor:pointer;padding:0;margin-top:6px}
+.tc-why{padding:11px 15px 14px 53px;background:var(--bg);border-top:2px solid var(--br);display:none}
+.ws{margin-bottom:10px}
+.ws:last-child{margin-bottom:0}
+.wsh{font-size:11px;font-weight:800;color:var(--i3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.wst{font-size:13px;font-weight:600;color:var(--i2);line-height:1.75}
+.db{background:var(--Gb);border:2.5px solid var(--Gd);border-radius:12px;padding:13px 15px;margin-top:4px;display:none;align-items:center;gap:11px;box-shadow:0 2px 0 var(--Gd)}
+.db.sh{display:flex}
+
+/* STREAK & SOS */
+.stk{background:var(--w);border:2.5px solid var(--br);border-radius:16px;padding:15px 17px;display:flex;align-items:center;gap:14px;margin-bottom:14px;box-shadow:0 2px 0 var(--br)}
+.sds{display:flex;gap:4px}
+.sd{width:27px;height:7px;border-radius:4px}
+.sd.on{background:var(--O)}.sd.off{background:var(--br)}
+.sos{width:100%;padding:15px 17px;border:3px dashed var(--Rs);border-radius:16px;background:var(--w);font-family:'Nunito',sans-serif;cursor:pointer;display:flex;align-items:center;gap:13px;text-align:left;margin-bottom:14px;transition:all .2s}
+.sos:hover{border-color:var(--R);background:#FFF5F5}
+.sos-i{width:40px;height:40px;border-radius:11px;background:var(--Rs);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+
+/* JOURNAL / PROGRESS */
+.card{background:var(--w);border:2px solid var(--br);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 0 var(--br)}
+.inp{width:100%;padding:11px 13px;border:2.5px solid var(--br);border-radius:12px;background:var(--bg);font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:var(--ink);outline:none;resize:none;transition:border-color .15s}
+.inp:focus{border-color:var(--B)}
+.il{font-size:11px;font-weight:800;color:var(--i2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.4px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:7px 13px;border:2.5px solid var(--br);border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;background:var(--bg);color:var(--i2);transition:all .15s}
+.chip.on{background:var(--Gs);border-color:var(--G);color:var(--Gd)}
+.mrow{display:flex;gap:8px}
+.mbm{flex:1;padding:9px 4px;border:2.5px solid var(--br);border-radius:12px;background:var(--bg);cursor:pointer;font-size:19px;text-align:center;transition:all .15s}
+.mbm.on{border-color:var(--G);background:var(--Gb);transform:scale(1.06)}
+.pg{height:8px;background:var(--br);border-radius:4px;overflow:hidden}
+.pgf{height:100%;background:var(--G);border-radius:4px;transition:width .5s}
+.sr2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.sb2{background:var(--w);border:2.5px solid var(--br);border-radius:12px;padding:14px;box-shadow:0 2px 0 var(--br)}
+.sn{font-size:26px;font-weight:900}
+.slab{font-size:11px;font-weight:700;color:var(--i3);margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
+.fc{background:var(--w);border:2.5px solid var(--br);border-radius:16px;padding:14px 17px;margin-bottom:10px;opacity:.5;box-shadow:0 2px 0 var(--br)}
+.fwrow{display:flex;gap:6px;margin-top:8px}
+.fw{width:26px;height:26px;border-radius:7px;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2.5px solid var(--br);color:var(--i3);background:var(--bg)}
+.fw.t{background:var(--Ps);border-color:var(--P);color:var(--P)}
+.sl2{font-size:11px;font-weight:900;color:var(--i3);letter-spacing:.5px;text-transform:uppercase;margin:18px 0 10px}
+
+/* CHAT */
+.ca{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:9px;background:var(--bg)}
+.ca::-webkit-scrollbar{display:none}
+.msg{max-width:85%;padding:11px 14px;border-radius:16px;font-size:14px;font-weight:600;line-height:1.55}
+.ma{background:var(--w);border:2px solid var(--br);color:var(--ink);align-self:flex-start;border-bottom-left-radius:4px}
+.mu{background:var(--B);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;font-weight:700}
+.cbar{padding:10px 13px;background:var(--w);border-top:2px solid var(--br);display:flex;gap:8px;align-items:flex-end}
+.cin{flex:1;padding:9px 13px;border:2.5px solid var(--br);border-radius:20px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:600;color:var(--ink);background:var(--bg);outline:none;resize:none;max-height:100px;transition:border-color .15s}
+.cin:focus{border-color:var(--B)}
+.send{width:42px;height:42px;border-radius:50%;background:var(--B);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 3px 0 var(--Bd)}
+.send:active{box-shadow:none;transform:translateY(2px)}
+.send:disabled{background:var(--br);box-shadow:none}
+.typ{display:flex;gap:4px;padding:9px 13px;background:var(--w);border:2px solid var(--br);border-radius:16px;border-bottom-left-radius:4px;align-self:flex-start}
+.td{width:7px;height:7px;border-radius:50%;background:var(--i3);animation:bk .9s infinite}
+.td:nth-child(2){animation-delay:.15s}.td:nth-child(3){animation-delay:.3s}
+@keyframes bk{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* MODALS */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;display:flex;align-items:flex-end;justify-content:center}
+.ov.h{display:none}
+.sh{background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:92vh;overflow-y:auto;padding:20px 20px 36px;animation:up .3s ease}
+.sh::-webkit-scrollbar{display:none}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.hdl{width:40px;height:5px;background:var(--br);border-radius:3px;margin:0 auto 18px}
+.st{font-size:21px;font-weight:900;margin-bottom:8px;line-height:1.25}
+.cst{display:none}.cst.on{display:block;animation:ri .2s}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:18px}
+.sit{padding:13px 11px;border:2.5px solid var(--br);border-radius:16px;background:var(--w);cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;text-align:left;transition:all .15s;box-shadow:0 2px 0 var(--br)}
+.sit .si{font-size:23px;display:block;margin-bottom:5px}
+.sit.on{border-color:var(--O);background:var(--Ob);box-shadow:0 2px 0 var(--Od)}
+.br2{width:96px;height:96px;border-radius:50%;background:var(--Gb);border:4px solid var(--G);margin:18px auto;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--Gd);animation:pls 4s ease-in-out infinite;cursor:pointer;box-shadow:0 4px 0 var(--Gd)}
+@keyframes pls{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.abox{background:var(--G);color:#fff;border-radius:16px;padding:18px;margin-bottom:13px;text-align:center;border:3px solid var(--Gd);box-shadow:0 4px 0 var(--Gd)}
+.am{font-size:18px;font-weight:900;line-height:1.3;margin-bottom:5px}
+.ad{font-size:13px;font-weight:600;opacity:.9;line-height:1.6}
+.nb2{background:var(--Ob);border:2px solid var(--O);border-radius:12px;padding:11px 13px;font-size:13px;font-weight:600;color:var(--i2);line-height:1.6;margin-bottom:16px}
+.tstp{display:none}.tstp.on{display:block;animation:ri .2s}
+.tq{font-size:15px;font-weight:800;line-height:1.5;margin-bottom:13px}
+.top{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.topt{padding:13px 15px;border:2.5px solid var(--br);border-radius:12px;background:var(--w);cursor:pointer;font-size:14px;font-weight:700;text-align:left;font-family:'Nunito',sans-serif;transition:all .15s;box-shadow:0 2px 0 var(--br)}
+.topt.on{border-color:var(--G);background:var(--Gb);color:var(--Gd);box-shadow:0 2px 0 var(--Gd)}
+.tdts{display:flex;gap:5px;margin-bottom:16px}
+.tdt{height:6px;flex:1;border-radius:3px;background:var(--br)}
+.tdt.dn{background:var(--G)}.tdt.cr{background:var(--B)}
+.rn{font-size:52px;font-weight:900;color:var(--G);text-align:center;margin:10px 0 2px}
+.rl{text-align:center;font-size:13px;font-weight:700;color:var(--i3);margin-bottom:18px}
+.ri{background:var(--Gb);border:2px solid var(--Gd);border-radius:12px;padding:13px 15px;font-size:13px;font-weight:600;line-height:1.65;margin-bottom:16px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ ONBOARDING ═══ -->
+<div class="scr on" id="so">
+<div class="ob">
+<div class="ob-prog"><div class="ob-pf" id="opf" style="width:0%"></div></div>
+
+<!-- KROK 0: Intro -->
+<div class="os on" id="o0">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 0">
+    <div style="font-size:52px;margin-bottom:20px">🌱</div>
+    <div style="font-size:22px;font-weight:900;color:var(--ink);line-height:1.35;margin-bottom:14px">Pomagamy rodzicom lepiej rozumieć i wspierać rozwój swoich dzieci.</div>
+    <div style="font-size:14px;font-weight:600;color:var(--i2);line-height:1.65;max-width:320px">Spersonalizowany program rozwoju, codzienne wsparcie dopasowane do wieku oraz potrzeb Twojego dziecka.</div>
+  </div>
+  <button class="btn bg" onclick="nO(1)">ROZPOCZNIJ →</button>
+</div>
+
+<!-- KROK 1: Wiek -->
+<div class="os" id="o1">
+  <div class="oe">🎂</div>
+  <div class="ot">Ile lat ma Twoje dziecko?</div>
+  <div class="os2">Dostosujemy program do jego etapu rozwoju.</div>
+  <div class="ag">
+    <button class="ab" onclick="pA(this,'0-2')"><span class="ab-e">🍼</span><div class="ab-r">0–2</div><div class="ab-l">niemowlę</div></button>
+    <button class="ab" onclick="pA(this,'3-5')"><span class="ab-e">🧸</span><div class="ab-r">3–5</div><div class="ab-l">przedszkolak</div></button>
+    <button class="ab" onclick="pA(this,'6-8')"><span class="ab-e">🎒</span><div class="ab-r">6–8</div><div class="ab-l">wczesnoszkolny</div></button>
+    <button class="ab" onclick="pA(this,'9-11')"><span class="ab-e">📚</span><div class="ab-r">9–11</div><div class="ab-l">szkolny</div></button>
+    <button class="ab" onclick="pA(this,'12-13')"><span class="ab-e">🎧</span><div class="ab-r">12–13</div><div class="ab-l">preteen</div></button>
+    <button class="ab" onclick="pA(this,'14+')"><span class="ab-e">🧑</span><div class="ab-r">14+</div><div class="ab-l">nastolatek</div></button>
+  </div>
+  <div class="sp"></div>
+  <button class="btn bg" id="ob1" onclick="nO(2)" disabled>DALEJ →</button>
+  <button class="btn bk" onclick="nO(0)">← Wróć</button>
+</div>
+
+<!-- KROK 2: Z czym jest najtrudniej -->
+<div class="os" id="o2">
+  <div class="oe">💬</div>
+  <div class="ot">Z czym obecnie jest Ci najtrudniej?</div>
+  <div class="os2">Wybierz 1–3 obszary. Dopasujemy program do Twojej sytuacji.</div>
+  <div class="ml" id="ch-list"></div>
+  <div class="sp"></div>
+  <button class="btn bg" id="ob2" onclick="nO(3)" disabled>DALEJ →</button>
+  <button class="btn bk" onclick="nO(1)">← Wróć</button>
+</div>
+
+<!-- KROK 3: Co rozwinąć -->
+<div class="os" id="o3">
+  <div class="oe">🎯</div>
+  <div class="ot">Co chciałbyś rozwinąć u dziecka?</div>
+  <div class="os2">Wybierz 1–3 priorytety. Dopasujemy program.</div>
+  <div class="ml" id="goal-list"></div>
+  <div class="sp"></div>
+  <button class="btn bg" id="ob3" onclick="nO(4)" disabled>DALEJ →</button>
+  <button class="btn bk" onclick="nO(2)">← Wróć</button>
+</div>
+
+<!-- KROK 4: Personalizacja -->
+<div class="os" id="o4">
+  <div id="pers-screen"></div>
+  <div class="sp"></div>
+  <button class="btn bg" onclick="nO(5)">DALEJ →</button>
+  <button class="btn bk" onclick="nO(3)">← Wróć</button>
+</div>
+
+<!-- KROK 5: Filozofia -->
+<div class="os" id="o5">
+  <div style="text-align:center;padding:4px 0 20px">
+    <div style="font-size:21px;font-weight:900;margin-bottom:6px">Jak to działa? 🔍</div>
+    <div style="font-size:13px;font-weight:600;color:var(--i2);line-height:1.6">Trwałe zmiany w rozwoju dziecka powstają dzięki małym, regularnym działaniom w codziennych sytuacjach.</div>
+  </div>
+  <div class="philo-card"><div class="philo-icon">🗓️</div><div><div class="philo-t">Codzienne mikrozadania</div><div class="philo-s">2–3 konkretne działania dziennie, które możesz wpleść w zwykłe chwile. Bez rewolucji.</div></div></div>
+  <div class="philo-card"><div class="philo-icon">🧠</div><div><div class="philo-t">Oparte na neurobiologii</div><div class="philo-s">Każde zadanie ma naukowe uzasadnienie. Tłumaczymy, co dzieje się w mózgu dziecka — bez żargonu.</div></div></div>
+  <div class="philo-card"><div class="philo-icon">📈</div><div><div class="philo-t">Efekty w tygodniach 3–4</div><div class="philo-s">Pierwsze 2 tygodnie to budowanie Twoich nawyków. Zmiany u dziecka pojawiają się stopniowo — i zostają na stałe.</div></div></div>
+  <div class="sp"></div>
+  <button class="btn bg" onclick="startLoad()">ZACZYNAM 🚀</button>
+</div>
+
+</div>
+</div>
+
+<!-- ═══ LOADING ═══ -->
+<div class="scr" id="sload" style="background:var(--G);justify-content:center;align-items:center">
+  <div style="width:100%;max-width:380px;padding:32px 28px;text-align:center">
+    <div class="ld-wrap">
+      <div class="ld-ring"></div>
+      <div class="ld-ring r2"></div>
+      <div class="ld-center">🌱</div>
+    </div>
+    <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.35;margin:0 0 10px" id="ldTitle">Układamy program<br>dla Twojego dziecka</div>
+    <div style="font-size:14px;font-weight:600;color:rgba(255,255,255,.85);line-height:1.65;min-height:48px" id="ldMsg">Analizujemy wiek i etap rozwojowy…</div>
+    <div style="margin:26px 0 8px;height:10px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden">
+      <div id="ldBar" style="height:100%;background:#fff;border-radius:5px;width:0%;transition:width .7s ease"></div>
+    </div>
+    <div style="font-size:12px;font-weight:800;color:rgba(255,255,255,.6)" id="ldPct">0%</div>
+    <div style="margin-top:28px;background:rgba(255,255,255,.15);border-radius:16px;padding:16px 18px;border:2px solid rgba(255,255,255,.2);text-align:left">
+      <div style="font-size:10px;font-weight:900;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Czy wiesz, że…</div>
+      <div style="font-size:13px;font-weight:600;color:#fff;line-height:1.7;min-height:64px" id="ldFact">Pierwsze 5 lat życia to okres, w którym mózg dziecka tworzy ponad milion nowych połączeń nerwowych na sekundę.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ HOME ═══ -->
+<div class="scr" id="sh">
+  <div class="tb"><div><div style="font-size:12px;font-weight:700;color:var(--i3)">Dzień dobry</div><div style="font-size:21px;font-weight:900">Jak dziś idzie? 👋</div></div><div class="av">R</div></div>
+  <div class="scroll" style="padding-top:16px">
+
+    <div class="ec">
+      <div class="ec-t">
+        <div class="ec-tag"><div class="ec-dot"></div><div class="ec-tl">Etap 1 z 3 · Samodzielność</div></div>
+        <div class="ec-ti">Teraz pracujecie nad samodzielnością</div>
+        <div class="ec-s">Ten tydzień: dawanie dziecku realnych wyborów</div>
+      </div>
+      <div class="ec-sep"></div>
+      <div class="ec-wks">
+        <div class="wk wd"><div class="wn wnd">1</div><div class="wl wld">Obserwacja</div><div class="wck">✓</div></div>
+        <div class="wk wc"><div class="wn wnc">2</div><div class="wl wlc">Decyzje ← teraz</div></div>
+        <div class="wk wf"><div class="wn wnf">3</div><div class="wl wlf">Emocje</div></div>
+        <div class="wk wf"><div class="wn wnf">✦</div><div class="wl wlf">Sprawdzenie</div></div>
+      </div>
+      <div class="ec-sep"></div>
+      <div class="ec-bot">
+        <div class="ec-nx">Po etapie 1 → <strong>Odporność emocjonalna</strong></div>
+        <div class="ec-nt">za 2 tyg.</div>
+      </div>
+    </div>
+
+    <div class="ci">
+      <div class="ci-q">Jak teraz się czujesz? 🤔</div>
+      <div class="ci-g">
+        <button class="co" onclick="pCI(this,'Spokojnie')"><span class="em">😌</span>Spokojnie</button>
+        <button class="co" onclick="pCI(this,'Zmęczona')"><span class="em">😮‍💨</span>Zmęczona</button>
+        <button class="co" onclick="pCI(this,'Sfrustrowana')"><span class="em">😤</span>Sfrustrowana</button>
+        <button class="co" onclick="pCI(this,'Dobrze')"><span class="em">🙂</span>Dobrze</button>
+      </div>
+      <div class="ci-r" id="cir"></div>
+    </div>
+
+    <div class="th"><div class="th-t">Zadania na dziś</div><div class="th-c"><span id="dc">1</span> / 4</div></div>
+
+    <div class="tc fd" id="tk0">
+      <div class="tcm"><div class="chk dn" onclick="tT(this,0)">✓</div><div class="tcb"><div class="tct dn">Pozwól Mai wybrać ubrania na jutro</div><div class="tcm2"><span class="tt2">wieczór · ~3 min</span><span class="ttag">samodzielność</span></div><button class="wb" onclick="tW(this)">▾ dlaczego to ważne</button></div></div>
+      <div class="tc-why">
+        <div class="ws"><div class="wsh">💡 Co zobaczysz w praktyce</div><div class="wst">Po kilku tygodniach wieczory będą spokojniejsze — Maja ma swój moment kontroli i rzadziej walczy o resztę. Dzieci z jedną „swoją" decyzją dziennie mają wyraźnie mniej wybuchów przy innych sprawach.</div></div>
+        <div class="ws"><div class="wsh">🧠 Co dzieje się w mózgu dziecka</div><div class="wst">Każda samodzielna decyzja aktywuje układ nagrody i obszary odpowiedzialne za poczucie sprawczości. To dokładnie ten mechanizm, który buduje wewnętrzną motywację — bez presji i zewnętrznych nagród.</div></div>
+      </div>
+    </div>
+
+    <div class="tc" id="tk1">
+      <div class="tcm"><div class="chk" onclick="tT(this,1)"></div><div class="tcb"><div class="tct">Gdy pyta „co mam zrobić?" — odpowiedz pytaniem</div><div class="tcm2"><span class="tt2">cały dzień · kilka razy</span><span class="ttag">sprawczość</span></div><button class="wb" onclick="tW(this)">▾ dlaczego to ważne</button></div></div>
+      <div class="tc-why">
+        <div class="ws"><div class="wsh">💡 Co zobaczysz w praktyce</div><div class="wst">Pierwsze 2 tygodnie mogą być frustrujące — dziecko się denerwuje. To dobry znak. Około 3. tygodnia zacznie częściej próbować samodzielnie, zanim w ogóle zapyta.</div></div>
+        <div class="ws"><div class="wsh">🧠 Co dzieje się w mózgu dziecka</div><div class="wst">Każde pytanie odesłane z powrotem do dziecka aktywuje korę przedczołową — część mózgu odpowiedzialną za rozwiązywanie problemów. Im częściej ćwiczona, tym działa sprawniej. To jak ćwiczenie mięśnia.</div></div>
+      </div>
+    </div>
+
+    <div class="tc" id="tk2">
+      <div class="tcm"><div class="chk" onclick="tT(this,2)"></div><div class="tcb"><div class="tct">Jedna decyzja domowa należy dziś do Mai</div><div class="tcm2"><span class="tt2">ustalcie rano · ~2 min</span><span class="ttag">samodzielność</span></div><button class="wb" onclick="tW(this)">▾ dlaczego to ważne</button></div></div>
+      <div class="tc-why">
+        <div class="ws"><div class="wsh">💡 Co zobaczysz w praktyce</div><div class="wst">Mniej oporu przy posiłkach i przed snem. Mózg dostał poczucie wpływu i odpuszcza w innych miejscach. Szczególnie widoczne po tygodniu regularnego stosowania.</div></div>
+        <div class="ws"><div class="wsh">🧠 Co dzieje się w mózgu dziecka</div><div class="wst">Brak poczucia wpływu to jeden z głównych powodów wybuchów i oporu. Gdy dziecko regularnie dostaje przestrzeń do decydowania, napięcie spada — nie dlatego że jest grzeczniejsze, ale dlatego że nie musi walczyć o kontrolę.</div></div>
+      </div>
+    </div>
+
+    <div class="tc" id="tk3">
+      <div class="tcm"><div class="chk" onclick="tT(this,3)"></div><div class="tcb"><div class="tct">Nazwij emocję Mai, nie oceniaj jej</div><div class="tcm2"><span class="tt2">każda emocjonalna chwila</span><span class="ttag">emocje</span></div><button class="wb" onclick="tW(this)">▾ dlaczego to ważne</button></div></div>
+      <div class="tc-why">
+        <div class="ws"><div class="wsh">💡 Co zobaczysz w praktyce</div><div class="wst">Złości stają się krótsze — zazwyczaj widać to w ciągu 2–3 tygodni. Po kilku tygodniach Maja zacznie sama używać słów zamiast wybuchać. To znak, że nauczyła się regulować emocje.</div></div>
+        <div class="ws"><div class="wsh">🧠 Co dzieje się w mózgu dziecka</div><div class="wst">Nazywanie emocji (affect labeling) to technika potwierdzona w neurobiologii — aktywuje korę przedczołową i wycisza ciało migdałowate odpowiedzialne za reakcje stresowe. Działa szybciej niż tłumaczenie i szybciej niż uspokajanie.</div></div>
+      </div>
+    </div>
+
+    <div class="db" id="dbanner"><span style="font-size:22px">🎉</span><span style="font-size:14px;font-weight:800;color:var(--Gd)">Wszystkie zadania! Świetna robota!</span></div>
+
+    <div class="stk">
+      <div style="font-size:22px">🔥</div>
+      <div><div style="font-size:28px;font-weight:900;color:var(--O)">5 dni</div><div style="font-size:11px;font-weight:700;color:var(--i3)">z rzędu</div></div>
+      <div style="flex:1;margin-left:6px"><div class="sds"><div class="sd on"></div><div class="sd on"></div><div class="sd on"></div><div class="sd on"></div><div class="sd on"></div><div class="sd off"></div><div class="sd off"></div></div><div style="font-size:12px;font-weight:700;color:var(--i3);margin-top:5px">Dobry rytm!</div></div>
+    </div>
+
+    <button class="sos" onclick="opC()">
+      <div class="sos-i">🆘</div>
+      <div><div style="font-size:14px;font-weight:800;color:var(--R)">Potrzebuję pomocy teraz</div><div style="font-size:12px;font-weight:600;color:var(--i3);margin-top:1px">atak złości, kłótnia, nie wiem co robić</div></div>
+    </button>
+
+    <div id="czy-wiesz-card"></div>
+
+  </div>
+  <div class="nav">
+    <button class="nb on" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg><span>Główna</span></button>
+    <button class="nb" onclick="go('plan')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Plan</span></button>
+    <button class="nb" onclick="go('journal')"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Dziennik</span></button>
+    <button class="nb" onclick="go('ai')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>AI Coach</span></button>
+    <button class="nb" onclick="go('progress')"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><span>Postępy</span></button>
+  </div>
+</div>
+
+<!-- ═══ PLAN ═══ -->
+<div class="scr" id="sp">
+  <div class="tb"><div style="font-size:21px;font-weight:900">Plan tygodnia 📋</div></div>
+  <div class="scroll" style="padding-top:16px">
+    <div class="ec"><div class="ec-t" style="padding-bottom:13px"><div class="ec-tag"><div class="ec-dot"></div><div class="ec-tl">Etap 1 z 3 · Samodzielność</div></div><div class="ec-ti" style="font-size:18px">Teraz pracujecie nad samodzielnością</div><div class="ec-s">Ten tydzień: dawanie dziecku realnych wyborów</div></div><div class="ec-sep"></div><div class="ec-wks"><div class="wk wd"><div class="wn wnd">1</div><div class="wl wld">Obserwacja</div><div class="wck">✓</div></div><div class="wk wc"><div class="wn wnc">2</div><div class="wl wlc">Decyzje ← teraz</div></div><div class="wk wf"><div class="wn wnf">3</div><div class="wl wlf">Emocje</div></div><div class="wk wf"><div class="wn wnf">✦</div><div class="wl wlf">Sprawdzenie</div></div></div><div class="ec-sep"></div><div class="ec-bot"><div class="ec-nx">Po etapie 1 → <strong>Odporność emocjonalna</strong></div><div class="ec-nt">za 2 tyg.</div></div></div>
+    <div class="sl2">Zadania tego tygodnia</div>
+    <div class="tc"><div class="tcm"><div class="chk dn" onclick="tC(this)">✓</div><div class="tcb"><div class="tct dn">Pozwól Mai wybrać ubrania na jutro</div><div class="tcm2"><span class="tt2">wieczór</span><span class="ttag">samodzielność</span></div><button class="wb" onclick="tW(this)">▾ dlaczego to ważne</button></div></div><div class="tc-why"><div class="ws"><div class="wsh">💡 Co zobaczysz</div><div class="wst">Po kilku tygodniach wieczory spokojniejsze. Maja ma swój moment kontroli i rzadziej walczy o inne sprawy.</div></div><div class="ws"><div class="wsh">🧠 Mózg dziecka</div><div class="wst">Samodzielna decyzja aktywuje układ nagrody i buduje poczucie sprawczości — fundament wewnętrznej motywacji.</div></div></div></div>
+    <div class="tc"><div class="tcm"><div class="chk" onclick="tC(this)"></div><div class="tcb"><div class="tct">Gdy pyta — odpowiedz pytaniem</div><div class="tcm2"><span class="tt2">cały dzień</span><span class="ttag">sprawczość</span></div><button class="wb" onclick="tW(this)">▾ dlaczego to ważne</button></div></div><div class="tc-why"><div class="ws"><div class="wsh">💡 Co zobaczysz</div><div class="wst">Około 3. tygodnia zacznie próbować samodzielnie zanim zapyta. Na początku może się denerwować — to dobry znak.</div></div><div class="ws"><div class="wsh">🧠 Mózg dziecka</div><div class="wst">Aktywujesz korę przedczołową odpowiedzialną za rozwiązywanie problemów. Im częściej ćwiczona, tym sprawniejsza.</div></div></div></div>
+    <div class="tc"><div class="tcm"><div class="chk" onclick="tC(this)"></div><div class="tcb"><div class="tct">Jedna decyzja domowa należy do Mai</div><div class="tcm2"><span class="tt2">ustalcie rano</span><span class="ttag">samodzielność</span></div><button class="wb" onclick="tW(this)">▾ dlaczego to ważne</button></div></div><div class="tc-why"><div class="ws"><div class="wsh">💡 Co zobaczysz</div><div class="wst">Mniej oporu przy posiłkach i przed snem. Mózg dostał wpływ — odpuszcza w innych miejscach.</div></div><div class="ws"><div class="wsh">🧠 Mózg dziecka</div><div class="wst">Brak wpływu to główna przyczyna wybuchów. Gdy dziecko decyduje regularnie — nie walczy o kontrolę.</div></div></div></div>
+    <div class="tc"><div class="tcm"><div class="chk" onclick="tC(this)"></div><div class="tcb"><div class="tct">Obserwuj bez wchodzenia przez 10 min</div><div class="tcm2"><span class="tt2">gdy się bawi</span><span class="ttag">samodzielność</span></div><button class="wb" onclick="tW(this)">▾ dlaczego to ważne</button></div></div><div class="tc-why"><div class="ws"><div class="wsh">💡 Co zobaczysz</div><div class="wst">Dziecko zacznie bawić się dłużej samodzielnie i rzadziej potrzebować Twojej interwencji.</div></div><div class="ws"><div class="wsh">🧠 Mózg dziecka</div><div class="wst">Twoja obecność bez ingerencji wysyła sygnał: „Wierzę, że dasz radę." Wzmacnia poczucie kompetencji silniej niż pochwały.</div></div></div></div>
+    <div class="tc" style="margin-bottom:14px"><div class="tcm"><div class="chk" onclick="tC(this)"></div><div class="tcb"><div class="tct">Nazwij emocję Mai, nie oceniaj jej</div><div class="tcm2"><span class="tt2">każda emocjonalna chwila</span><span class="ttag">emocje</span></div><button class="wb" onclick="tW(this)">▾ dlaczego to ważne</button></div></div><div class="tc-why"><div class="ws"><div class="wsh">💡 Co zobaczysz</div><div class="wst">Złości krótsze w ciągu 2–3 tygodni. Potem Maja zacznie sama używać słów zamiast wybuchać.</div></div><div class="ws"><div class="wsh">🧠 Mózg dziecka</div><div class="wst">Affect labeling aktywuje korę przedczołową i wycisza ciało migdałowate. Działa szybciej niż tłumaczenie.</div></div></div></div>
+    <div style="background:var(--Pb);border:2.5px solid var(--P);border-radius:16px;padding:16px;margin-bottom:10px"><div style="display:inline-flex;align-items:center;gap:5px;background:#fff;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;color:var(--P);border:2px solid var(--P);margin-bottom:10px">✦ Sprawdzenie postępu</div><div style="font-size:16px;font-weight:900;margin-bottom:5px">Czy coś się zmieniło?</div><div style="font-size:13px;font-weight:600;color:var(--i2);line-height:1.6;margin-bottom:12px">5 pytań obserwacyjnych. Na koniec 2. tygodnia.</div><button class="btn bp" onclick="opT()">PODGLĄD →</button></div>
+  </div>
+  <div class="nav"><button class="nb" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg><span>Główna</span></button><button class="nb on" onclick="go('plan')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Plan</span></button><button class="nb" onclick="go('journal')"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Dziennik</span></button><button class="nb" onclick="go('ai')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>AI Coach</span></button><button class="nb" onclick="go('progress')"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><span>Postępy</span></button></div>
+</div>
+
+<!-- ═══ JOURNAL ═══ -->
+<div class="scr" id="sj">
+  <div class="tb"><div style="font-size:21px;font-weight:900">Dziennik 📓</div></div>
+  <div class="scroll" style="padding-top:16px">
+    <div class="card"><div style="font-size:12px;font-weight:700;color:var(--i3);margin-bottom:11px">środa, 28 maja</div><div class="mrow" style="margin-bottom:13px"><div class="mbm" onclick="pM(this)">😤</div><div class="mbm" onclick="pM(this)">😐</div><div class="mbm on" onclick="pM(this)">🙂</div><div class="mbm" onclick="pM(this)">😊</div></div><div style="margin-bottom:11px"><label class="il">Co się dziś wydarzyło?</label><textarea class="inp" rows="4" placeholder="Opisz co zadziałało, co było trudne..."></textarea></div><div><label class="il">Moja reakcja była</label><div class="chips"><div class="chip" onclick="sCh(this)">spokojna</div><div class="chip" onclick="sCh(this)">cierpliwa</div><div class="chip on" onclick="sCh(this)">konsekwentna</div><div class="chip" onclick="sCh(this)">impulsywna</div><div class="chip" onclick="sCh(this)">niespójna</div></div></div></div>
+    <button class="btn bg" onclick="sJ(this)">ZAPISZ</button>
+    <div class="sl2">Wcześniej</div>
+    <div class="card" style="padding:13px"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:13px;font-weight:800">wtorek, 27 maja</span><span>🙂</span></div><div style="font-size:13px;font-weight:600;color:var(--i2);line-height:1.5">Maja nie chciała wstać rano. Zostawiłam wybór — wstała sama po 5 min.</div><div style="margin-top:7px"><span style="background:var(--Gs);color:var(--Gd);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:800">konsekwentna</span></div></div>
+    <div class="card" style="padding:13px"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:13px;font-weight:800">poniedziałek, 26 maja</span><span>😤</span></div><div style="font-size:13px;font-weight:600;color:var(--i2);line-height:1.5">Wieczór był ciężki. Krzyczałam o lekcje. Czułam się potem źle.</div><div style="margin-top:7px"><span style="background:var(--Ob);color:var(--Od);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:800">impulsywna</span></div></div>
+  </div>
+  <div class="nav"><button class="nb" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg><span>Główna</span></button><button class="nb" onclick="go('plan')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Plan</span></button><button class="nb on" onclick="go('journal')"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Dziennik</span></button><button class="nb" onclick="go('ai')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>AI Coach</span></button><button class="nb" onclick="go('progress')"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><span>Postępy</span></button></div>
+</div>
+
+<!-- ═══ AI ═══ -->
+<div class="scr" id="sai" style="padding-bottom:0">
+  <div style="padding:13px 18px 11px;display:flex;align-items:center;justify-content:space-between;background:var(--w);border-bottom:2px solid var(--br)">
+    <button class="back" onclick="go('home')"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Wróć</button>
+    <div style="text-align:center"><div style="font-size:17px;font-weight:900">AI Coach 🤖</div><div style="font-size:11px;font-weight:700;color:var(--i3)">bez oceniania · konkretna pomoc</div></div>
+    <div style="display:flex;align-items:center;gap:4px"><div style="width:8px;height:8px;background:var(--G);border-radius:50%;border:2px solid var(--Gd)"></div><span style="font-size:11px;font-weight:700;color:var(--i3)">online</span></div>
+  </div>
+  <div class="ca" id="cm">
+    <div style="text-align:center;padding:0 0 7px"><div style="display:inline-block;background:var(--w);border:2px solid var(--br);padding:5px 13px;border-radius:20px;font-size:11px;font-weight:700;color:var(--i3)">Maja, 7 lat · Tydzień 2: Decyzje</div></div>
+    <div style="font-size:11px;font-weight:800;color:var(--i3);margin-left:2px;margin-bottom:3px">AI COACH</div>
+    <div class="msg ma">Cześć! Masz za sobą 5 aktywnych dni — to naprawdę widać. 💪<br><br>Z Twoich wpisów: wtorek był świetny. Zostawiłaś wybór i zadziałało. Dokładnie o to chodzi w tym tygodniu.<br><br>Co dziś było trudne?</div>
+  </div>
+  <div style="padding:8px 13px 4px;background:var(--w)"><button onclick="opC()" style="width:100%;padding:10px 13px;border:2.5px solid var(--Rs);border-radius:12px;background:#FFF5F5;color:var(--R);font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;text-align:left">🆘 Potrzebuję pomocy teraz</button></div>
+  <div class="cbar"><textarea class="cin" id="ci2" placeholder="Napisz o konkretnej sytuacji..." rows="1" onkeydown="ck(event)" oninput="ar(this)"></textarea><button class="send" id="sb" onclick="sm()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button></div>
+</div>
+
+<!-- ═══ PROGRESS ═══ -->
+<div class="scr" id="spr">
+  <div class="tb"><div style="font-size:21px;font-weight:900">Postępy 📈</div></div>
+  <div class="scroll" style="padding-top:16px">
+    <div style="background:var(--Gb);border:2.5px solid var(--Gd);border-radius:16px;padding:16px;margin-bottom:13px"><div style="font-size:13px;font-weight:800;color:var(--Gd);margin-bottom:4px">✨ Widzę postęp!</div><div style="font-size:13px;font-weight:600;line-height:1.6">Przez ostatnie 5 dni byłaś bardziej konsekwentna. Maja coraz częściej próbuje czegoś sama — to Twoja robota!</div></div>
+    <div class="sr2"><div class="sb2"><div class="sn">🔥 5</div><div class="slab">dni z rzędu</div></div><div class="sb2"><div class="sn">✅ 11</div><div class="slab">zadań zrobionych</div></div></div>
+    <div class="sl2">Gdzie jesteś w programie</div>
+    <div class="ec" style="margin-bottom:10px"><div class="ec-t" style="padding-bottom:13px"><div class="ec-tag"><div class="ec-dot"></div><div class="ec-tl">Etap 1 z 3 · w toku</div></div><div class="ec-ti" style="font-size:18px">Samodzielność i sprawczość</div><div class="ec-s">4 tygodnie · zaczęty 14 maja</div></div><div class="ec-sep"></div><div class="ec-wks"><div class="wk wd"><div class="wn wnd">1</div><div class="wl wld">Obserwacja</div><div class="wck">✓</div></div><div class="wk wc"><div class="wn wnc">2</div><div class="wl wlc">Decyzje ←</div></div><div class="wk wf"><div class="wn wnf">3</div><div class="wl wlf">Emocje</div></div><div class="wk wf"><div class="wn wnf">✦</div><div class="wl wlf">Sprawdzenie</div></div></div><div class="ec-sep"></div><div class="ec-bot"><div class="ec-nx">Po etapie 1 → <strong>Odporność emocjonalna</strong></div><div class="ec-nt">za 2 tyg.</div></div></div>
+    <div class="fc"><div style="font-size:14px;font-weight:800;margin-bottom:2px">Etap 2 · Odporność emocjonalna</div><div style="font-size:12px;font-weight:600;color:var(--i3)">4 tygodnie · od czerwca</div><div class="fwrow"><div class="fw">T1</div><div class="fw">T2</div><div class="fw">T3</div><div class="fw t">✦</div></div></div>
+    <div class="fc" style="opacity:.35"><div style="font-size:14px;font-weight:800;margin-bottom:2px">Etap 3 · Pewność siebie i relacje</div><div style="font-size:12px;font-weight:600;color:var(--i3)">4 tygodnie · od lipca</div><div class="fwrow"><div class="fw">T1</div><div class="fw">T2</div><div class="fw">T3</div><div class="fw t">✦</div></div></div>
+    <div style="background:var(--Bs);border:2px solid var(--Bd);border-radius:16px;padding:15px;margin-top:4px"><div style="font-size:13px;font-weight:800;color:var(--Bd);margin-bottom:4px">💙 Efekty pojawiają się stopniowo</div><div style="font-size:13px;font-weight:600;color:var(--i2);line-height:1.6">Pierwsze 2 tygodnie to budowanie Twoich nawyków. Zmiany u Mai będą wyraźniejsze od tygodnia 3.</div></div>
+  </div>
+  <div class="nav"><button class="nb" onclick="go('home')"><svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg><span>Główna</span></button><button class="nb" onclick="go('plan')"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg><span>Plan</span></button><button class="nb" onclick="go('journal')"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Dziennik</span></button><button class="nb" onclick="go('ai')"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg><span>AI Coach</span></button><button class="nb on" onclick="go('progress')"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg><span>Postępy</span></button></div>
+</div>
+
+<!-- CRISIS MODAL -->
+<div class="ov h" id="ovc" onclick="if(event.target===this)clC()">
+  <div class="sh"><div class="hdl"></div>
+    <div class="cst on" id="c0"><div style="font-size:13px;font-weight:700;color:var(--i3);margin-bottom:5px">Jestem tutaj 💙</div><div class="st">Co się teraz dzieje?</div><div class="sg"><button class="sit" onclick="pS(this,'złość')"><span class="si">😡</span>Atak złości dziecka</button><button class="sit" onclick="pS(this,'kłótnia')"><span class="si">💥</span>Pokłóciliśmy się</button><button class="sit" onclick="pS(this,'wybuchnę')"><span class="si">🌋</span>Zaraz wybuchnę</button><button class="sit" onclick="pS(this,'nie wiem')"><span class="si">❓</span>Nie wiem co robić</button><button class="sit" onclick="pS(this,'płacz')"><span class="si">😭</span>Płacze bez powodu</button><button class="sit" onclick="pS(this,'żal')"><span class="si">💔</span>Żałuję swojej reakcji</button></div></div>
+    <div class="cst" id="c1"><div style="font-size:13px;font-weight:700;color:var(--i3);margin-bottom:4px">Krok 1</div><div class="st">Najpierw Ty. 🫁</div><div style="font-size:14px;font-weight:600;color:var(--i2);line-height:1.65;margin-bottom:13px">Zatrzymaj się. Daj sobie 30 sekund zanim cokolwiek powiesz.</div><div class="br2" id="bel">oddychaj</div><div style="text-align:center;font-size:12px;font-weight:700;color:var(--i3);margin-bottom:16px">dotknij, żeby zacząć</div><button class="btn bg" onclick="toC(2)">JESTEM SPOKOJNIEJSZA →</button></div>
+    <div class="cst" id="c2"><div style="font-size:13px;font-weight:700;color:var(--i3);margin-bottom:4px">Teraz zrób jedno</div><div class="st">Tylko to. 👇</div><div class="abox"><div class="am" id="ca"></div><div class="ad" id="cad"></div></div><div class="nb2"><strong>To normalne: </strong><span id="cn"></span></div><button class="btn bg" onclick="toC(3)">ZROBIŁAM →</button></div>
+    <div class="cst" id="c3"><div class="st">Co teraz? 🙏</div><div style="font-size:14px;font-weight:600;color:var(--i2);line-height:1.65;margin-bottom:16px">Dobrze sobie poradziłaś. Co byłoby teraz pomocne?</div><button class="btn bb" onclick="clC();go('ai')">💬 POROZMAWIAJ Z AI COACH</button><button class="btn bk" onclick="clC();go('journal')">📓 ZAPISZ CO SIĘ STAŁO</button><button class="btn bk" onclick="clC()">✓ DZIĘKUJĘ, JUŻ LEPIEJ</button></div>
+  </div>
+</div>
+
+<!-- TEST MODAL -->
+<div class="ov h" id="ovt" onclick="if(event.target===this)clT()">
+  <div class="sh"><div class="hdl"></div>
+    <div class="tstp on" id="ti"><div style="display:inline-flex;align-items:center;gap:5px;background:var(--Ps);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800;color:var(--P);border:2px solid var(--P);margin-bottom:10px">✦ Sprawdzenie postępu</div><div class="st">Czy coś się zmieniło? 🔍</div><div style="font-size:14px;font-weight:600;color:var(--i2);line-height:1.65;margin-bottom:13px">5 pytań obserwacyjnych. Odpowiadasz na podstawie tego, co widzisz na co dzień.</div><div style="background:var(--Bs);border-radius:12px;padding:11px 13px;font-size:13px;font-weight:600;color:var(--Bd);line-height:1.6;margin-bottom:16px;border:2px solid var(--Bd)">Wynik pokazuje kierunek — nie ocenia Ciebie ani dziecka.</div><button class="btn bg" onclick="stT()">ZACZNIJ →</button></div>
+    <div class="tstp" id="t1"><div class="tdts"><div class="tdt cr"></div><div class="tdt"></div><div class="tdt"></div><div class="tdt"></div><div class="tdt"></div></div><div class="tq">Czy dziecko częściej próbuje coś zrobić samo, zanim poprosi o pomoc?</div><div class="top"><button class="topt" onclick="pa(this,1,1)">Nie — nadal od razu woła mnie</button><button class="topt" onclick="pa(this,1,2)">Czasami, ale rzadko</button><button class="topt" onclick="pa(this,1,3)">Tak, częściej niż 2 tygodnie temu</button><button class="topt" onclick="pa(this,1,4)">Wyraźnie tak — naprawdę to widać!</button></div></div>
+    <div class="tstp" id="t2"><div class="tdts"><div class="tdt dn"></div><div class="tdt cr"></div><div class="tdt"></div><div class="tdt"></div><div class="tdt"></div></div><div class="tq">Gdy dajesz mu wybór, co zazwyczaj robi?</div><div class="top"><button class="topt" onclick="pa(this,2,1)">Nie chce decydować, oddaje mi</button><button class="topt" onclick="pa(this,2,2)">Decyduje, ale pyta czy dobrze wybrało</button><button class="topt" onclick="pa(this,2,3)">Decyduje sprawnie, po chwili namysłu</button><button class="topt" onclick="pa(this,2,4)">Decyduje pewnie, bez szukania potwierdzenia</button></div></div>
+    <div class="tstp" id="t3"><div class="tdts"><div class="tdt dn"></div><div class="tdt dn"></div><div class="tdt cr"></div><div class="tdt"></div><div class="tdt"></div></div><div class="tq">Gdy coś mu się nie uda — jak szybko się zbiera?</div><div class="top"><button class="topt" onclick="pa(this,3,1)">Długo, z dużym rozstrojeniem</button><button class="topt" onclick="pa(this,3,2)">Jest zdenerwowane, ale mija po kilku minutach</button><button class="topt" onclick="pa(this,3,3)">Zazwyczaj przyjmuje to spokojnie</button><button class="topt" onclick="pa(this,3,4)">Traktuje naturalnie i szuka co dalej</button></div></div>
+    <div class="tstp" id="t4"><div class="tdts"><div class="tdt dn"></div><div class="tdt dn"></div><div class="tdt dn"></div><div class="tdt cr"></div><div class="tdt"></div></div><div class="tq">Jak często wykonywałaś zadania przez ostatnie 2 tygodnie?</div><div class="top"><button class="topt" onclick="pa(this,4,1)">Rzadko — wracałam do starych nawyków</button><button class="topt" onclick="pa(this,4,2)">Starałam się, ale nieregularnie</button><button class="topt" onclick="pa(this,4,3)">Dość regularnie, były potknięcia</button><button class="topt" onclick="pa(this,4,4)">Bardzo regularnie przez cały czas</button></div></div>
+    <div class="tstp" id="t5"><div class="tdts"><div class="tdt dn"></div><div class="tdt dn"></div><div class="tdt dn"></div><div class="tdt dn"></div><div class="tdt cr"></div></div><div class="tq">Jak reagujesz na trudne chwile vs. 2 tygodnie temu?</div><div class="top"><button class="topt" onclick="pa(this,5,1)">Tak samo — nadal tak samo trudno</button><button class="topt" onclick="pa(this,5,2)">Trochę spokojniej, ale bywa ciężko</button><button class="topt" onclick="pa(this,5,3)">Wyraźnie spokojniej w większości sytuacji</button><button class="topt" onclick="pa(this,5,4)">Znacząca zmiana — naprawdę to czuję!</button></div></div>
+    <div class="tstp" id="tr"><div style="display:inline-flex;align-items:center;gap:5px;background:var(--Ps);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:800;color:var(--P);border:2px solid var(--P);margin-bottom:9px">✦ Wynik</div><div class="st" id="rtit">Dobry postęp!</div><div class="rn" id="rnr">74</div><div class="rl">na 100 punktów</div><div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--i2);margin-bottom:4px"><span>Samodzielność dziecka</span><span id="rb1">68%</span></div><div class="pg"><div class="pgf" id="rf1" style="width:68%"></div></div></div><div style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;color:var(--i2);margin-bottom:4px"><span>Twoja regularność</span><span id="rb2">80%</span></div><div class="pg"><div class="pgf" id="rf2" style="width:80%"></div></div></div><div class="ri" id="ri2"></div><button class="btn bg" onclick="clT();go('plan')">WRÓĆ DO PLANU</button></div>
+  </div>
+</div>
+
+<script>
+// ── DANE ──
+const challenges={
+  '0-2':[
+    {e:'🌙',t:'Sen i usypianie'},
+    {e:'🍼',t:'Karmienie'},
+    {e:'😭',t:'Płacz i uspokajanie'},
+    {e:'⏰',t:'Budowanie rutyny'},
+    {e:'🤱',t:'Separacja i przywiązanie'},
+    {e:'✏️',t:'Inne (opisz)',other:true}
+  ],
+  default:[
+    {e:'😤',t:'Emocje i wybuchy złości'},
+    {e:'💪',t:'Samodzielność'},
+    {e:'📱',t:'Telefon i ekrany'},
+    {e:'🎯',t:'Koncentracja'},
+    {e:'🌟',t:'Pewność siebie'},
+    {e:'👥',t:'Relacje z rówieśnikami'},
+    {e:'🗣️',t:'Komunikacja'},
+    {e:'📋',t:'Obowiązki'},
+    {e:'✏️',t:'Inne (opisz)',other:true}
+  ]
+};
+const goals={
+  '0-2':[
+    {e:'😴',t:'Zdrowy sen',tip:'Regularny sen to fundament rozwoju mózgu niemowlęcia — wpływa na pamięć, odporność i regulację emocji. Dobrze śpiące dziecko uczy się szybciej i jest spokojniejsze w ciągu dnia.'},
+    {e:'🤝',t:'Bezpieczne przywiązanie',tip:'Silna więź z opiekunem to najlepsza inwestycja w przyszłość dziecka — dzieci z bezpiecznym przywiązaniem są bardziej odporne psychicznie, lepiej nawiązują relacje i radzą sobie ze stresem.'},
+    {e:'🌱',t:'Spokojne reagowanie',tip:'Twój spokój dosłownie reguluje układ nerwowy dziecka. Niemowlęta uczą się samoregulacji przez kontakt z spokojnym dorosłym — to proces zwany ko-regulacją.'},
+    {e:'💬',t:'Komunikacja z dzieckiem',tip:'Mówienie do dziecka — nawet zanim zacznie rozumieć — buduje połączenia nerwowe w mózgu. Każde zdanie to cegiełka przyszłej mowy i inteligencji emocjonalnej.'},
+    {e:'⚖️',t:'Równowaga i spokój rodzica',tip:'Wypalony rodzic nie może skutecznie wspierać dziecka. Dbanie o siebie to nie egoizm — to warunek dobrego rodzicielstwa. Twój stan emocjonalny bezpośrednio wpływa na samopoczucie dziecka.'}
+  ],
+  default:[
+    {e:'💪',t:'Samodzielność',tip:'Dzieci rozwijające samodzielność częściej podejmują inicjatywę, są bardziej pewne siebie i lepiej radzą sobie z nowymi sytuacjami. Samodzielność buduje się przez małe, codzienne wybory — nie przez wielkie wyzwania.'},
+    {e:'🎯',t:'Odpowiedzialność',tip:'Dzieci z poczuciem odpowiedzialności lepiej radzą sobie w dorosłym życiu — są bardziej konsekwentne, dotrzymują zobowiązań i mają wyższe poczucie własnej wartości. Buduje się ją przez konsekwencje, nie kary.'},
+    {e:'🧠',t:'Odporność psychiczna',tip:'Odporność psychiczna pomaga dziecku wracać do równowagi po porażkach i niepowodzeniach, które są naturalną częścią życia. To jedna z najważniejszych umiejętności XXI wieku — i można ją ćwiczyć od małego.'},
+    {e:'💬',t:'Komunikacja',tip:'Dzieci, które potrafią wyrażać swoje potrzeby słowami, rzadziej używają agresji i rzadziej się wycofują. Dobra komunikacja to fundament zdrowych relacji przez całe życie.'},
+    {e:'🔍',t:'Koncentracja',tip:'Zdolność skupienia uwagi to jeden z najsilniejszych predyktorów sukcesu szkolnego i zawodowego — silniejszy niż IQ. Koncentrację można trenować w codziennych sytuacjach, bez specjalnych ćwiczeń.'},
+    {e:'🌟',t:'Pewność siebie',tip:'Pewność siebie nie jest cechą wrodzoną — buduje się przez doświadczenia, w których dziecko pokonuje małe trudności. Dzieci pewne siebie łatwiej nawiązują relacje, podejmują wyzwania i bronią swoich granic.'},
+    {e:'👥',t:'Relacje społeczne',tip:'Jakość relacji w dzieciństwie to jeden z najlepszych predyktorów zdrowia psychicznego w dorosłości. Dzieci z dobrymi relacjami rówieśniczymi lepiej radzą sobie ze stresem i są bardziej odporne emocjonalnie.'},
+    {e:'😤',t:'Radzenie sobie z emocjami',tip:'Dzieci, które potrafią regulować emocje, mają mniej konfliktów, lepsze wyniki w szkole i zdrowsze relacje. Regulacja emocjonalna to umiejętność, którą rodzic buduje przez własny spokój i nazywanie emocji dziecka.'}
+  ]
+};
+const devInfo={
+  '0-2':'Na tym etapie dzieci budują podstawowe poczucie bezpieczeństwa, uczą się regulacji emocji i rozwijają przywiązanie do opiekuna. To fundamenty, od których zależy cały dalszy rozwój.',
+  '3-5':'Na tym etapie dzieci rozwijają mowę, uczą się samodzielności i testują granice — to czas intensywnego poznawania zasad. Ogromne znaczenie ma rutyna i przewidywalność.',
+  '6-8':'Na tym etapie dzieci rozwijają samodzielność, uczą się współpracy i budują pierwsze relacje poza rodziną. Wzrasta znaczenie poczucia kompetencji.',
+  '9-11':'Na tym etapie dzieci szukają własnej tożsamości. Rówieśnicy stają się bardzo ważni. Kluczowe jest wspieranie sprawczości i zaufania.',
+  '12-13':'Na tym etapie zaczynają się intensywne zmiany emocjonalne i społeczne. Dziecko potrzebuje zarówno przestrzeni, jak i obecności rodzica.',
+  '14+':'Na tym etapie nastolatek intensywnie buduje niezależność. Twoja rola zmienia się z przewodnika na towarzysza. Relacja i dialog są ważniejsze niż zasady.'
+};
+
+let selAge='', selAgeKey='', selChallenges=[], selGoals=[];
+const ops=[0,17,34,51,75,100];
+
+function nO(n){
+  document.querySelectorAll('.os').forEach(s=>s.classList.remove('on'));
+  document.getElementById('o'+n).classList.add('on');
+  document.getElementById('opf').style.width=ops[n]+'%';
+  if(n===4) buildPers();
+  window.scrollTo(0,0);
+}
+
+function pA(b,key){
+  document.querySelectorAll('.ab').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on');
+  selAge=b.querySelector('.ab-r').textContent;
+  selAgeKey=key;
+  document.getElementById('ob1').disabled=false;
+  buildList('ch-list', challenges[key]||challenges.default, 'ob2');
+  buildList('goal-list', goals[key]||goals.default, 'ob3');
+}
+
+function buildList(containerId, items, btnId){
+  const isGoals=containerId==='goal-list';
+  const c=document.getElementById(containerId);
+  c.innerHTML='';
+  items.forEach(item=>{
+    const wrap=document.createElement('div');
+    const div=document.createElement('div');
+    div.className='mb2';
+    let inner=`<span class="me">${item.e}</span><span class="mt">${item.t}</span><span class="mc">✓</span>`;
+    if(item.other) inner+=`<input class="other-in" placeholder="Opisz swoimi słowami..." onclick="event.stopPropagation()" />`;
+    div.innerHTML=inner;
+    let tipEl=null;
+    if(isGoals && item.tip){
+      tipEl=document.createElement('div');
+      tipEl.className='tip-box';
+      tipEl.innerHTML=`<div class="tip-label">Dlaczego to ważne?</div><div class="tip-text">${item.tip}</div>`;
+    }
+    div.onclick=function(e){
+      if(e.target.tagName==='INPUT')return;
+      const wasOn=div.classList.contains('on');
+      const cnt=document.querySelectorAll('#'+containerId+' .mb2.on').length;
+      if(!wasOn&&cnt>=3)return;
+      div.classList.toggle('on');
+      if(tipEl) tipEl.classList.toggle('sh', div.classList.contains('on'));
+      document.getElementById(btnId).disabled=document.querySelectorAll('#'+containerId+' .mb2.on').length===0;
+    };
+    wrap.appendChild(div);
+    if(tipEl) wrap.appendChild(tipEl);
+    c.appendChild(wrap);
+  });
+}
+
+function getSelText(containerId){
+  return Array.from(document.querySelectorAll('#'+containerId+' .mb2.on .mt')).map(x=>x.textContent);
+}
+
+function buildPers(){
+  selChallenges=getSelText('ch-list');
+  selGoals=getSelText('goal-list');
+  const info=devInfo[selAgeKey]||devInfo['6-8'];
+  const ch=selChallenges.join(', ')||'—';
+  const gl=selGoals.join(', ')||'—';
+  document.getElementById('pers-screen').innerHTML=`
+    <div class="pers-card">
+      <div class="pers-label">Twoje dziecko</div>
+      <div class="pers-age">Ma ${selAge} lat.</div>
+      <div class="pers-dev">${info}</div>
+    </div>
+    <div class="pers-goals">
+      <div class="pers-g-title">Co uwzględnimy w programie</div>
+      <div class="pers-g-item"><div class="pers-dot"></div><div class="pers-g-text"><strong>Trudności:</strong> ${ch}</div></div>
+      <div class="pers-g-item"><div class="pers-dot"></div><div class="pers-g-text"><strong>Cele:</strong> ${gl}</div></div>
+    </div>
+    <div class="pers-note">Połączymy potrzeby rozwojowe typowe dla wieku Twojego dziecka z celami, które są dla Was teraz najważniejsze.</div>
+  `;
+}
+
+// ── DAILY FACTS ──
+const dailyFacts={
+  '0-2':[
+    {f:'W pierwszych 3 latach życia mózg dziecka osiąga aż 80% swojej dorosłej objętości. To najszybszy wzrost w całym życiu człowieka.',s:'Neurobiologia rozwoju'},
+    {f:'Niemowlęta rozpoznają głos mamy już w łonie matki — od około 3. miesiąca ciąży. Głos to pierwsze narzędzie budowania więzi.',s:'Badania prenatalne'},
+    {f:'Płacz to jedyna forma komunikacji niemowlęcia. Dziecko do 6. miesiąca życia nie potrafi manipulować — płacząc, po prostu informuje o potrzebie.',s:'Psychologia niemowląt'},
+    {f:'Kontakt wzrok w oczy z opiekunem aktywuje te same obszary mózgu u dziecka i rodzica jednocześnie. To dosłowna synchronizacja neurologiczna.',s:'Neuroscience of bonding'},
+    {f:'Dzieci, do których dużo się mówi w pierwszych 3 latach, słyszą o 30 milionów słów więcej niż dzieci z cichych domów. Różnica widoczna jest w wynikach szkolnych przez całe życie.',s:'Hart & Risley, 1995'},
+    {f:'Noszenie dziecka blisko ciała reguluje jego temperaturę, rytm serca i poziom kortyzolu (hormonu stresu). To nie rozpieszczanie — to biologia.',s:'Badania nad ko-regulacją'},
+    {f:'Niemowlęta nie „przyzwyczajają się do płakania" — wręcz przeciwnie. Dziecko, którego potrzeby są szybko zaspokajane, staje się spokojniejsze z wiekiem.',s:'Teoria przywiązania Bowlby'},
+    {f:'Sen głęboki u niemowląt to czas konsolidacji pamięci — mózg porządkuje wszystko, czego się nauczył w ciągu dnia. Dlatego regularny sen tak bardzo wpływa na rozwój.',s:'Neuroscience of sleep'},
+    {f:'Niemowlęta uczą się przez naśladowanie twarzy już w pierwszych godzinach życia. Wystawianie języka przez dorosłego wywołuje tę samą reakcję u noworodka.',s:'Meltzoff & Moore, 1977'},
+    {f:'Twój spokój dosłownie reguluje układ nerwowy dziecka. Ten proces — ko-regulacja — to jeden z najważniejszych mechanizmów wczesnego rozwoju.',s:'Polyvagal Theory, Porges'},
+    {f:'Rutyna i przewidywalność obniżają poziom kortyzolu u niemowląt. Mózg, który wie czego się spodziewać, może poświęcić energię na uczenie się, zamiast na czujność.',s:'Regulacja stresu u niemowląt'},
+    {f:'Uśmiech niemowlęcia w 6–8. tygodniu życia to nie przypadek — to wyuczona odpowiedź społeczna. Dziecko odkryło, że uśmiech wywołuje reakcję opiekuna.',s:'Psychologia społeczna'},
+    {f:'Dotyk to pierwsze zmysłowe doświadczenie dziecka. Niemowlęta pozbawione kontaktu fizycznego rosną wolniej — nawet przy odpowiednim żywieniu.',s:'Badania nad deprywacją dotykową'},
+    {f:'Dzieci do 2. roku życia uczą się języka nie z telewizji ani tabletów — tylko z żywej interakcji z człowiekiem. Ekrany nie zastąpią rozmowy.',s:'Kuhl et al., 2003'},
+  ],
+  '3-5':[
+    {f:'Dzieci w wieku 3–5 lat zadają średnio 300–400 pytań dziennie. To nie jest uciążliwość — to mózg aktywnie buduje sieć połączeń przyczynowo-skutkowych.',s:'Psychologia poznawcza'},
+    {f:'Zabawa „na niby" (udawanie) to ćwiczenie kory przedczołowej. Dzieci, które więcej się bawią symbolicznie, lepiej radzą sobie z emocjami i planowaniem w przyszłości.',s:'Badania nad zabawą symboliczną'},
+    {f:'Wybuchy złości u 3-latka to norma neurologiczna — kora przedczołowa (hamulec emocji) dojrzewa do 25. roku życia. Dziecko dosłownie nie potrafi się jeszcze zatrzymać.',s:'Neurobiologia złości'},
+    {f:'Dzieci w tym wieku uczą się przez powtórzenie. Ta sama bajka po raz dwudziesty? To nie znudzenie — to konsolidacja języka i sekwencji zdarzeń.',s:'Teoria uczenia się'},
+    {f:'Rutyna posiłków, kąpieli i snu obniża poziom lęku u dzieci w wieku przedszkolnym. Przewidywalność = bezpieczeństwo = spokojniejsze zachowanie.',s:'Regulacja emocjonalna'},
+    {f:'Dzieci, które słyszą „spróbuj jeszcze raz" zamiast „dasz radę", mają wyższe poczucie własnej skuteczności. Chodzi o wysiłek, nie o wynik.',s:'Badania Dweck nad growth mindset'},
+    {f:'3-latki mają dwie i pół razy więcej połączeń synaptycznych niż dorośli. To właśnie dlatego są takie absorbujące — dosłownie wszystko jest dla nich nowym odkryciem.',s:'Rozwój synaptyczny'},
+    {f:'Dzieci w tym wieku nie rozumieją kłamstwa jako konceptu moralnego — rozumieją je jako narzędzie. Karanie za kłamstwo jest mniej skuteczne niż modelowanie szczerości.',s:'Psychologia moralna'},
+    {f:'Strach przed ciemnością, potworami i rozstaniem to norma rozwojowa w wieku 3–5 lat. Mózg uczy się odróżniać zagrożenia realne od wyobrażonych — to wymaga czasu.',s:'Psychologia lęku dziecięcego'},
+    {f:'Słowo „nie" działa jak magnes na dziecko w tym wieku. Im więcej zakazów, tym więcej prób ich łamania. Skuteczniejsze jest przekierowanie niż zakaz.',s:'Regulacja behawioralna'},
+    {f:'Dzieci, które mają czas na wolną zabawę bez kierowania przez dorosłego, rozwijają lepszą koncentrację i kreatywność niż dzieci z wypełnionym grafikiem zajęć.',s:'Badania nad wolną zabawą'},
+    {f:'Emocje są zaraźliwe neurologicznie. Twój spokój w trudnej chwili dosłownie uspokaja układ nerwowy dziecka przez tzw. neurony lustrzane.',s:'Teoria neuronów lustrzanych'},
+    {f:'Dzieci w wieku 4–5 lat zaczynają rozumieć, że inni ludzie mogą mieć inne myśli i przekonania (teoria umysłu). To kamień milowy empatii.',s:'Teoria umysłu, Premack & Woodruff'},
+    {f:'Czytanie dziecku na głos 20 minut dziennie daje mu do 6. roku życia około 290 godzin słownictwa, struktur zdań i myślenia narracyjnego więcej niż rówieśnicy.',s:'American Academy of Pediatrics'},
+  ],
+  '6-8':[
+    {f:'Dzieci w wieku 6–8 lat wchodzą w fazę „latencji" — okres wyjątkowej chłonności na zasady, fakty i umiejętności. To najlepszy czas na budowanie nawyków.',s:'Psychologia Piageta'},
+    {f:'Poczucie kompetencji (teoria Eriksona: pracowitość vs. poczucie niższości) kształtuje się właśnie teraz. Małe sukcesy w tym wieku mają nieproporcjonalnie duży wpływ na dorosłe poczucie własnej wartości.',s:'Erikson, stadia rozwojowe'},
+    {f:'Dzieci w tym wieku potrzebują usłyszeć „popełniasz błędy, bo próbujesz czegoś trudnego" zamiast „jesteś mądry/zdolny". Pochwała procesu buduje odporność psychiczną.',s:'Badania Dweck'},
+    {f:'Przyjaźnie w tym wieku opierają się na wspólnych aktywnościach, nie na emocjach. Dziecko, które nie ma wspólnego zajęcia z rówieśnikami, czuje się wykluczone.',s:'Psychologia społeczna dzieci'},
+    {f:'Sen jest kluczowy dla konsolidacji pamięci szkolnej. Dzieci śpiące 9–10 godzin zapamiętują o 20–40% więcej niż te z deficytem snu.',s:'Neuroscience of learning'},
+    {f:'Krytyczne uwagi o pracy domowej kierowane do dziecka a nie do zadania (np. „jesteś nieuważny" vs „tutaj się pomyliłeś") różnie wpływają na motywację przez całe życie.',s:'Badania atrybucji'},
+    {f:'Ruch fizyczny bezpośrednio przed nauką zwiększa koncentrację o 20–30%. Przerwa na bieganie to nie odciąganie od nauki — to jej warunek.',s:'Ratey, „Spark"'},
+    {f:'Dzieci, które mają stałe obowiązki domowe, mają wyższe poczucie przynależności i odpowiedzialności. Chodzi o małe zadania, ale robione regularnie i naprawdę.',s:'Badania nad poczuciem odpowiedzialności'},
+    {f:'W tym wieku dzieci uczą się przez obserwację dorosłych bardziej niż przez słuchanie. To co robisz, działa silniej niż to co mówisz.',s:'Teoria modelowania Bandury'},
+    {f:'Dzieci w wieku 7–8 lat potrafią już rozumieć perspektywę innej osoby. To dobry moment na rozmowy o emocjach, konfliktach i skutkach decyzji.',s:'Teoria umysłu — etap 2'},
+    {f:'Strach przed oceną rówieśników pojawia się najintensywniej między 6. a 8. rokiem życia. Budowanie bezpiecznej rozmowy w domu to ochrona przed izolacją społeczną.',s:'Psychologia szkolna'},
+    {f:'Czytanie dla przyjemności 15–20 minut dziennie ma większy wpływ na wyniki szkolne niż dodatkowe korepetycje. Kluczowe: to musi być wybór dziecka, nie obowiązek.',s:'OECD, badania PISA'},
+    {f:'Dzieci w tym wieku często „testują granice" — nie z przekory, ale bo sprawdzają, czy reguły są stałe i przewidywalne. Konsekwencja rodzica = poczucie bezpieczeństwa.',s:'Teoria przywiązania'},
+    {f:'Wyobraźnia jest w tym wieku narzędziem regulacji emocji. Dziecko, które „wymyśla" sposoby radzenia sobie z trudnymi sytuacjami w zabawie, ćwiczy realne strategie.',s:'Psychologia twórcza'},
+  ],
+  '9-11':[
+    {f:'W wieku 9–11 lat rówieśnicy stają się ważniejsi niż rodzice w kształtowaniu zachowań. To norma — i to właśnie teraz relacja z Tobą musi być partnerska, nie hierarchiczna.',s:'Psychologia adolescencji'},
+    {f:'Poczucie sprawczości (możliwość wpływania na własne życie) jest w tym wieku silniejszym motywatorem niż nagrody zewnętrzne. Pytaj o zdanie — naprawdę.',s:'Teoria samostanowienia Deci & Ryan'},
+    {f:'Pierwsze objawy lęku szkolnego i społecznego często pojawiają się między 9. a 11. rokiem życia. Warto rozmawiać o emocjach, zanim staną się problemem.',s:'Psychologia kliniczna dzieci'},
+    {f:'Dzieci w tym wieku mają silniejszą pamięć roboczą niż kiedykolwiek wcześniej — to najlepszy czas na naukę strategii uczenia się, nie konkretnych treści.',s:'Neuropsychologia'},
+    {f:'Krytycyzm wobec rodzica to w tym wieku oznaka zdrowego rozwoju tożsamości, nie braku szacunku. Dziecko uczy się myśleć samodzielnie.',s:'Erikson, tożsamość'},
+    {f:'Dzieci, które mają stałe godziny snu, mają o 30% mniej problemów z koncentracją i nastrojem niż te z nieregularnym rytmem dobowym.',s:'Chronobiologia'},
+    {f:'Sport zespołowy w tym wieku uczy więcej niż techniki gry — regulacji emocji, przegrywania, lojalności i komunikacji pod presją.',s:'Psychologia sportu'},
+    {f:'„Nie chcę o tym rozmawiać" rzadko oznacza, że dziecko naprawdę nie chce. Często oznacza: „Nie wiem jak zacząć" lub „Boję się Twojej reakcji".',s:'Psychologia komunikacji'},
+    {f:'Dzieci w tym wieku lepiej przyswajają informacje przez opowieści i przykłady niż przez reguły i zakazy. Zamiast zasad — anegdoty z życia.',s:'Narracyjne uczenie się'},
+    {f:'Wstyd jest w tym wieku najsilniejszą emocją hamującą rozwój. Dzieci zawstydzone przy innych przestają próbować. Krytykuj zachowanie, nie osobę.',s:'Brown, badania nad wstydem'},
+    {f:'Zainteresowania w tym wieku, choć mogą wyglądać na obsesje, to mechanizm budowania tożsamości. Granie w gry, kolekcjonowanie czy YouTube to uczenie się przez pasję.',s:'Teoria flow, Csikszentmihalyi'},
+    {f:'Dzieci, których rodzice słuchają bez dawania rad przez pierwsze 3 minuty rozmowy, mówią dwa razy więcej i chętniej wracają z problemami.',s:'Aktywne słuchanie — Rogers'},
+    {f:'W tym wieku dzieci zaczynają rozumieć hipokryzję. „Rób co mówię, nie co robię" traci skuteczność — Twoje zachowanie jest teraz wzorcem, nie Twoje słowa.',s:'Modelowanie społeczne'},
+    {f:'Przeciążenie aktywnościami pozaszkolnymi podnosi poziom kortyzolu i zwiększa ryzyko wypalenia w późniejszym wieku. Czas wolny bez planu jest potrzebą, nie luksusem.',s:'Badania nad stresem dzieci'},
+  ],
+  '12-13':[
+    {f:'Mózg nastolatka przechodzi drugie wielkie przebudowanie (pierwsze było w wieku 0–3). Połączenia nerwowe są dosłownie demontowane i przebudowywane — to normalne, że nastolatek „nie myśli".',s:'Casey, neuroscience adolescence'},
+    {f:'Ciało migdałowate (centrum emocji) u nastolatka jest hiperaktywne, a kora przedczołowa (hamulec) — wciąż w budowie. Emocje są prawdziwe i intensywne, nie na pokaz.',s:'Neurobiologia nastolatka'},
+    {f:'Opinia rówieśników aktywuje u nastolatka te same obszary mózgu co nagroda materialna. Presja grupy to nie słabość — to biologiczna potrzeba przynależności.',s:'Chein et al., 2011'},
+    {f:'Nastolatki uczą się lepiej późnym rankiem i wczesnym popołudniem — rytm dobowy przesuwa się biologicznie. Trudności z wstawaniem to fizjologia, nie lenistwo.',s:'Chronobiologia adolescencji'},
+    {f:'Kłótnia z nastolatkiem jest często formą treningu tożsamości. On sprawdza, czy jego poglądy wytrzymają konfrontację. Zamiast wygrywać — pytaj.',s:'Psychologia tożsamości'},
+    {f:'Dzieci w tym wieku potrzebują słyszeć: „Wierzę, że dasz radę" częściej niż „musisz się bardziej starać". Poczucie kompetencji w tym wieku to ochrona przed ryzykownymi zachowaniami.',s:'Bandura, self-efficacy'},
+    {f:'Nastolatki, które mają regularne kolacje z rodziną (choćby 3 razy w tygodniu), są mniej narażone na depresję i eksperymentowanie z substancjami.',s:'CASA Columbia, 2012'},
+    {f:'Media społecznościowe u 12–13-latka zwiększają ryzyko lęku i niskiej samooceny — szczególnie u dziewczynek. Czas online bez rozmowy o tym co widzą jest ryzykiem.',s:'Twenge & Campbell'},
+    {f:'Nastolatek, który może powiedzieć „nie" w domu, łatwiej powie „nie" w grupie rówieśniczej. Granice ćwiczone z rodzicem to ochrona przed presją zewnętrzną.',s:'Psychologia asertywności'},
+    {f:'Wstyd i upokorzenie publiczne w tym wieku mogą być traumatyczne neurologicznie. Trudne rozmowy prowadź zawsze na osobności, nigdy przy innych.',s:'Shame research, Brown'},
+    {f:'Nastolatki potrzebują średnio 9 godzin snu, a śpią przeciętnie 7. Ten niedobór przekłada się bezpośrednio na regulację emocji, koncentrację i ryzyko depresji.',s:'National Sleep Foundation'},
+    {f:'Twoja relacja z nastolatkiem nie zależy od czasu spędzonego razem, ale od jakości rozmów. 20 minut bez telefonu i bez oceniania robi więcej niż cały dzień w tym samym domu.',s:'Psychologia relacji rodzic-nastolatek'},
+    {f:'Nastolatki, które mają poczucie celu (cokolwiek to jest — sport, muzyka, wolontariat), są bardziej odporne na stres i rzadziej podejmują ryzykowne zachowania.',s:'Badania nad sensem życia'},
+    {f:'W tym wieku „wszystko mi jedno" często oznacza „boli mnie tak bardzo, że muszę udawać, że nie boli". Dystans emocjonalny to mechanizm obronny, nie arogancja.',s:'Psychologia obronna'},
+  ],
+  '14+':[
+    {f:'Kora przedczołowa (odpowiedzialna za ocenę ryzyka i planowanie) dojrzewa do około 25. roku życia. Nastolatek podejmujący ryzykowne decyzje nie jest głupi — jego mózg dosłownie jeszcze nie widzi konsekwencji.',s:'Casey, brain development'},
+    {f:'Nastolatki, które mają co najmniej jednego dorosłego, któremu ufają, mają o 60% niższe ryzyko poważnych problemów zdrowotnych i depresji. Nie musisz być perfekcyjnym rodzicem — wystarczy być dostępny.',s:'Resilience research'},
+    {f:'Autonomia to w tym wieku podstawowa potrzeba psychologiczna. Nastolatek, któremu daje się więcej wolności stopniowo, uczy się z niej korzystać. Nastolatkowi, któremu się ją odbiera — buntuje się.',s:'Deci & Ryan, SDT'},
+    {f:'Rozmowy o przyszłości działają lepiej jako eksploracja niż jako plan. „Co Cię kręci?" działa lepiej niż „Co będziesz robić w życiu?"',s:'Psychologia narracyjna'},
+    {f:'Nastolatki przetwarzają emocje intensywniej niż dorośli — nie dlatego, że są dramatyczne, ale dlatego, że ich układ limbiczny reaguje silniej przy wciąż rozwijającym się hamulcu korowym.',s:'Neurobiologia emocji'},
+    {f:'Sen poniżej 8 godzin u nastolatka zwiększa ryzyko lęku i depresji o 40%. Odkładanie snu na weekendy nie likwiduje deficytu — pogłębia rozregulowanie rytmu dobowego.',s:'Walker, „Why We Sleep"'},
+    {f:'Nastolatek, który kłóci się z Tobą, wciąż potrzebuje Twojej akceptacji — to fundamentalna ambiwalencja tego etapu. Odrzuca wartości i jednocześnie chce, żebyś był dumny.',s:'Psychologia adolescencji'},
+    {f:'Badania pokazują, że dzieci, których rodzicom zależy na ich zdaniu, mają wyższe poczucie własnej wartości i lepiej radzą sobie z presją rówieśniczą.',s:'Steinberg, parenting research'},
+    {f:'Najskuteczniejszy styl wychowania nastolatka to „autorytatywny" — ciepły i jednocześnie z wyraźnymi granicami. Zarówno permisywność, jak i surowość zwiększają ryzyko problemów.',s:'Baumrind, style wychowania'},
+    {f:'Uzależnienie od mediów społecznościowych aktywuje te same ścieżki dopaminowe co uzależnienia od substancji. Rozmowa o tym — bez zakazu — jest skuteczniejsza niż odcięcie dostępu.',s:'Neurobiologia uzależnień'},
+    {f:'Nastolatki uczą się lepiej, gdy widzą sens tego, czego się uczą. „Po co mi to?" to nie opór — to uzasadniona potrzeba poznawcza.',s:'Teoria autodeterminacji'},
+    {f:'Regularne posiłki z rodziną (choćby raz dziennie) są jednym z najsilniejszych czynników ochronnych przed depresją, uzależnieniami i wczesną seksualizacją.',s:'CASA Columbia'},
+    {f:'Nastolatki, które mają pasję — cokolwiek to jest — budują wokół niej tożsamość i poczucie kompetencji. Twoje zadanie to nie kierować, ale nie gasić.',s:'Csikszentmihalyi, flow'},
+    {f:'Miłość rodzicielska wyrażona słowami jest dla nastolatka ważna — nawet jeśli reaguje wzruszeniem ramion. Mówienie „kocham cię" robi różnicę, nawet gdy nie widzisz efektu.',s:'Psychologia przywiązania'},
+  ]
+};
+
+function getDayOfYear(){
+  const now=new Date();
+  const start=new Date(now.getFullYear(),0,0);
+  return Math.floor((now-start)/86400000);
+}
+
+function renderCzyWiesz(){
+  const key=selAgeKey||'6-8';
+  const list=dailyFacts[key]||dailyFacts['6-8'];
+  const idx=getDayOfYear()%list.length;
+  const f=list[idx];
+  const dayNum=getDayOfYear();
+  document.getElementById('czy-wiesz-card').innerHTML=`
+    <div class="czy-card">
+      <div class="czy-head">
+        <div class="czy-hl"><span class="czy-icon">💡</span><span class="czy-htxt">Czy wiesz, że…</span></div>
+        <span class="czy-badge">dzień ${dayNum}</span>
+      </div>
+      <div class="czy-body">
+        <div class="czy-fact">${f.f}</div>
+        <div class="czy-source">📖 ${f.s}</div>
+        <div class="czy-next">🔄 Jutro pojawi się nowa ciekawostka</div>
+      </div>
+    </div>
+  `;
+}
+function startLoad(){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('sload').classList.add('on');
+
+  const steps=[
+    {pct:8,  msg:'Analizujemy wiek i etap rozwojowy…'},
+    {pct:22, msg:'Dopasowujemy trudności do Twojej sytuacji…'},
+    {pct:38, msg:'Dobieramy cele rozwojowe dla Twojego dziecka…'},
+    {pct:52, msg:'Układamy kolejność tygodni i etapów…'},
+    {pct:65, msg:'Dobieramy zadania neurobiologiczne…'},
+    {pct:78, msg:'Sprawdzamy spójność całego programu…'},
+    {pct:90, msg:'Personalizujemy treści i wskazówki…'},
+    {pct:100,msg:'Program gotowy! 🎉'},
+  ];
+  const facts=[
+    'Pierwsze 5 lat życia to okres, w którym mózg dziecka tworzy ponad milion nowych połączeń nerwowych na sekundę.',
+    'Dzieci, które słyszą więcej słów w pierwszych 3 latach życia, osiągają lepsze wyniki w szkole — niezależnie od poziomu wykształcenia rodziców.',
+    'Regularność jest ważniejsza niż intensywność. Małe działania wykonywane codziennie zmieniają mózg trwalej niż okazjonalne duże interwencje.',
+    'Ko-regulacja emocjonalna — czyli uspokajanie dziecka przez spokój rodzica — to jeden z najskuteczniejszych sposobów budowania odporności psychicznej.',
+    'Dzieci, które mają poczucie wpływu na swoje życie, rzadziej walczą o kontrolę i rzadziej mają wybuchy złości.',
+    'Zabawa bez sterowania przez dorosłego to ćwiczenie kory przedczołowej — tej samej części mózgu, która odpowiada za koncentrację i samoregulację.',
+  ];
+
+  const bar=document.getElementById('ldBar');
+  const pctEl=document.getElementById('ldPct');
+  const msgEl=document.getElementById('ldMsg');
+  const factEl=document.getElementById('ldFact');
+
+  let si=0, fi=0;
+  const totalMs=13000;
+  const stepMs=totalMs/steps.length;
+
+  // cycle facts every ~3.5s
+  const factInt=setInterval(()=>{
+    factEl.style.opacity='0';
+    setTimeout(()=>{fi=(fi+1)%facts.length;factEl.textContent=facts[fi];factEl.style.opacity='1'},350);
+  },3500);
+
+  function nextStep(){
+    if(si>=steps.length){clearInterval(factInt);setTimeout(()=>{go('home');renderCzyWiesz();},600);return;}
+    const s=steps[si++];
+    bar.style.width=s.pct+'%';
+    pctEl.textContent=s.pct+'%';
+    msgEl.style.opacity='0';
+    setTimeout(()=>{msgEl.textContent=s.msg;msgEl.style.opacity='1'},200);
+    setTimeout(nextStep, stepMs);
+  }
+  nextStep();
+}
+
+// ── NAV ──
+function go(n){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  const m={home:'sh',plan:'sp',journal:'sj',ai:'sai',progress:'spr'};
+  document.getElementById(m[n]).classList.add('on');
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  const idx={home:0,plan:1,journal:2,ai:3,progress:4};
+  document.querySelectorAll('.nb')[idx[n]]?.classList.add('on');
+  if(n==='ai')setTimeout(()=>{const c=document.getElementById('cm');c.scrollTop=c.scrollHeight},100);
+  if(n==='home')renderCzyWiesz();
+}
+
+// ── CHECK-IN ──
+const ciR={Spokojnie:'Dobrze! Jeden spokojny krok dziś wystarczy. 💚',Zmęczona:'To ma sens. Dziś możesz zrobić minimum — to też dobra robota. 🤗',Sfrustrowana:'Rozumiem. Możesz porozmawiać z AI Coach. 💬',Dobrze:'Super! Dobry moment na nowe wyzwanie. 🚀'};
+function pCI(el,k){document.querySelectorAll('.co').forEach(c=>c.classList.remove('on'));el.classList.add('on');const r=document.getElementById('cir');r.textContent=ciR[k];r.style.display='block'}
+
+// ── TASKS ──
+let dc=1;
+function tT(c,i){c.classList.toggle('dn');const card=document.getElementById('tk'+i);const t=card.querySelector('.tct');if(c.classList.contains('dn')){c.innerHTML='✓';t.classList.add('dn');card.classList.add('fd');dc++}else{c.innerHTML='';t.classList.remove('dn');card.classList.remove('fd');dc--}document.getElementById('dc').textContent=dc;document.getElementById('dbanner').classList.toggle('sh',dc===4)}
+function tC(c){c.classList.toggle('dn');const t=c.closest('.tcm').querySelector('.tct');c.classList.contains('dn')?(c.innerHTML='✓',t?.classList.add('dn')):(c.innerHTML='',t?.classList.remove('dn'))}
+function tW(b){const w=b.closest('.tcb').parentElement.parentElement.querySelector('.tc-why');const o=w.style.display==='block';w.style.display=o?'none':'block';b.textContent=o?'▾ dlaczego to ważne':'▴ ukryj'}
+
+// ── JOURNAL ──
+function pM(el){el.closest('.mrow').querySelectorAll('.mbm').forEach(b=>b.classList.remove('on'));el.classList.add('on')}
+function sCh(el){el.closest('.chips').querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+function sJ(b){b.textContent='✓ ZAPISANO!';b.style.background='var(--Gd)';setTimeout(()=>{b.textContent='ZAPISZ';b.style.background=''},2000)}
+
+// ── CRISIS ──
+let cs='';
+const sd={złość:['Wyjdź z pokoju na 2 minuty','Powiedz: „Muszę na chwilę wyjść, zaraz wracam."','Że dziecko w złości nie słyszy słów. To biologia.'],kłótnia:['Zatrzymaj rozmowę na 10 minut','„Potrzebuję chwili. Wrócimy do tego za 10 minut."','Że zaraz po kłótni nic dobrego nie wyniknie.'],wybuchnę:['Idź do łazienki, zmyj twarz zimną wodą','Zimna woda w 30 sekund obniża napięcie.','Że czujesz, że zaraz wybuchniesz.'],'nie wiem':['Nic nie rób przez 2 minuty','Obserwuj bez reagowania.','Że nie wiesz co zrobić. Spokój jest najlepszą odpowiedzią.'],płacz:['Usiądź obok i powiedz: „Jestem tutaj"','Nie pytaj co się stało — po prostu bądź.','Że nie rozumiesz dlaczego płacze.'],żal:['Napisz: co dziś zrobiłaś dobrze','Żal świadczy o tym, że Ci zależy.','Że czujesz się źle po swojej reakcji.']};
+function opC(){document.getElementById('ovc').classList.remove('h');['c0','c1','c2','c3'].forEach(id=>document.getElementById(id).classList.remove('on'));document.getElementById('c0').classList.add('on')}
+function clC(){document.getElementById('ovc').classList.add('h')}
+function pS(b,s){document.querySelectorAll('.sit').forEach(x=>x.classList.remove('on'));b.classList.add('on');cs=s;setTimeout(()=>toC(1),300)}
+function toC(n){['c0','c1','c2','c3'].forEach(id=>document.getElementById(id).classList.remove('on'));const d=sd[cs]||sd['nie wiem'];if(n===2){document.getElementById('ca').textContent=d[0];document.getElementById('cad').textContent=d[1];document.getElementById('cn').textContent=d[2]}document.getElementById('c'+n).classList.add('on')}
+let bOn=false;
+document.getElementById('bel').addEventListener('click',function(){if(bOn)return;bOn=true;const t=['wdech...','...','wydech...','...'];let i=0;const f=()=>{this.textContent=t[i%4];i++;setTimeout(f,2000)};f()});
+
+// ── TEST ──
+let tA={};
+function opT(){document.getElementById('ovt').classList.remove('h');['ti','t1','t2','t3','t4','t5','tr'].forEach(id=>document.getElementById(id).classList.remove('on'));document.getElementById('ti').classList.add('on')}
+function clT(){document.getElementById('ovt').classList.add('h')}
+function stT(){document.getElementById('ti').classList.remove('on');document.getElementById('t1').classList.add('on')}
+function pa(b,q,v){b.closest('.top').querySelectorAll('.topt').forEach(x=>x.classList.remove('on'));b.classList.add('on');tA[q]=v;setTimeout(()=>{document.getElementById('t'+q).classList.remove('on');q<5?document.getElementById('t'+(q+1)).classList.add('on'):showR()},300)}
+function showR(){const tot=Object.values(tA).reduce((a,b)=>a+b,0);const p=Math.round(tot/20*100);const s1=Math.round(((tA[1]||2)+(tA[2]||2))/8*100);const s2=Math.round(((tA[4]||2)+(tA[5]||2))/8*100);document.getElementById('rnr').textContent=p;document.getElementById('rb1').textContent=s1+'%';document.getElementById('rf1').style.width=s1+'%';document.getElementById('rb2').textContent=s2+'%';document.getElementById('rf2').style.width=s2+'%';const ts=['Dopiero zaczynacie 💪','Dobry start! 🌱','Widać postęp! 🎯','Świetna robota! 🏆'];const ins=['Pierwsze tygodnie są najtrudniejsze. Jeden krok dziennie wystarczy.','Widzę postęp w regularności. Zmiany u dziecka pojawiają się po 3–4 tygodniach.','Twoja konsekwencja się opłaca. Następny etap skupi się na odporności emocjonalnej.','Naprawdę dobry wynik. Zmiany są realne!'];const i=p<40?0:p<60?1:p<80?2:3;document.getElementById('rtit').textContent=ts[i];document.getElementById('ri2').textContent=ins[i];document.getElementById('t5').classList.remove('on');document.getElementById('tr').classList.add('on')}
+
+// ── AI COACH ──
+const SYS='Jesteś AI Coach w aplikacji ParentPath. Spokojnie, konkretnie, bez oceniania. Max 100 słów. Jedno pytanie na raz. Normalizuj trudności. NIE diagnozujesz. Kontekst: Maja, 7 lat. Tydzień 2: samodzielność.';
+let ch=[];
+async function sm(){const inp=document.getElementById('ci2');const txt=inp.value.trim();if(!txt)return;inp.value='';inp.style.height='auto';document.getElementById('sb').disabled=true;aM(txt,'u');ch.push({role:'user',content:txt});const tid=aT();try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYS,messages:ch})});const d=await r.json();rT(tid);const t=d.content?.[0]?.text||'Spróbuj ponownie.';aM(t,'ai');ch.push({role:'assistant',content:t})}catch(e){rT(tid);aM('Nie udało się połączyć.','ai')}document.getElementById('sb').disabled=false}
+function aM(t,r){const ca=document.getElementById('cm');const d=document.createElement('div');d.className='msg '+(r==='u'?'mu':'ma');d.textContent=t;ca.appendChild(d);ca.scrollTop=ca.scrollHeight}
+function aT(){const ca=document.getElementById('cm');const id='ty'+Date.now();const d=document.createElement('div');d.id=id;d.className='typ';d.innerHTML='<div class="td"></div><div class="td"></div><div class="td"></div>';ca.appendChild(d);ca.scrollTop=ca.scrollHeight;return id}
+function rT(id){const e=document.getElementById(id);if(e)e.remove()}
+function ck(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sm()}}
+function ar(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px'}
+</script>
+</body>
+</html>
