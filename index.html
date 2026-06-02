@@ -451,9 +451,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);margi
 
 <!-- KROK 1: Wiek -->
 <div class="os" id="o1">
-  <div class="oe">🎂</div>
-  <div class="ot">Ile lat ma Twoje dziecko?</div>
-  <div class="os2">Dostosujemy program do jego etapu rozwoju.</div>
+  <div class="oe">👶</div>
+  <div class="ot">Powiedz nam o swoim dziecku</div>
+  <div class="os2">Dostosujemy program do jego wieku i etapu rozwoju.</div>
+  <div style="margin-bottom:16px">
+    <label style="font-size:11px;font-weight:800;color:var(--i2);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px">Imię dziecka</label>
+    <input id="childName" type="text" placeholder="np. Maja" oninput="chkName()" style="width:100%;padding:13px 15px;border:2.5px solid var(--br);border-radius:12px;font-family:'Nunito',sans-serif;font-size:16px;font-weight:700;color:var(--ink);background:var(--w);outline:none;transition:border-color .15s" onfocus="this.style.borderColor='var(--B)'" onblur="this.style.borderColor='var(--br)'">
+  </div>
+  <div style="font-size:13px;font-weight:800;color:var(--i2);margin-bottom:10px">Ile lat ma Twoje dziecko?</div>
   <div class="ag">
     <button class="ab" onclick="pA(this,'0-2')"><span class="ab-e">🍼</span><div class="ab-r">0–2</div><div class="ab-l">niemowlę</div></button>
     <button class="ab" onclick="pA(this,'3-5')"><span class="ab-e">🧸</span><div class="ab-r">3–5</div><div class="ab-l">przedszkolak</div></button>
@@ -464,7 +469,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);margi
   </div>
   <div class="sp"></div>
   <button class="btn bg" id="ob1" onclick="nO(2)" disabled>DALEJ →</button>
-  <button class="btn bk" onclick="nO(0)">← Wróć</button>
+  <button class="btn bk" onclick="nO('0b')">← Wróć</button>
 </div>
 
 <!-- KROK 2: Z czym jest najtrudniej -->
@@ -505,7 +510,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);margi
   </div>
   <div class="philo-card"><div class="philo-icon">🗓️</div><div><div class="philo-t">Codzienne mikrozadania</div><div class="philo-s">2–3 konkretne działania dziennie, które możesz wpleść w zwykłe chwile. Bez rewolucji.</div></div></div>
   <div class="philo-card"><div class="philo-icon">🧠</div><div><div class="philo-t">Oparte na neurobiologii</div><div class="philo-s">Każde zadanie ma naukowe uzasadnienie. Tłumaczymy, co dzieje się w mózgu dziecka — bez żargonu.</div></div></div>
-  <div class="philo-card"><div class="philo-icon">📈</div><div><div class="philo-t">Efekty w tygodniach 3–4</div><div class="philo-s">Pierwsze 2 tygodnie to budowanie Twoich nawyków. Zmiany u dziecka pojawiają się stopniowo — i zostają na stałe.</div></div></div>
+  <div class="philo-card"><div class="philo-icon">📈</div><div><div class="philo-t">Pierwsze efekty</div><div class="philo-s">Pierwsze 2 tygodnie to budowanie Twoich nawyków. Wielu rodziców zaczyna widzieć pierwsze zmiany u dziecka około 3.–4. tygodnia.</div></div></div>
   <div class="sp"></div>
   <button class="btn bg" onclick="startLoad()">ZACZYNAM 🚀</button>
 </div>
@@ -515,21 +520,11 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);margi
 
 <!-- ═══ LOADING ═══ -->
 <div class="scr" id="sload" style="background:var(--G);justify-content:center;align-items:center">
-  <div style="width:100%;max-width:380px;padding:32px 28px;text-align:center">
-    <div class="ld-wrap">
-      <div class="ld-ring"></div>
-      <div class="ld-ring r2"></div>
-      <div class="ld-center">🌱</div>
-    </div>
-    <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.35;margin:0 0 10px" id="ldTitle">Układamy program<br>dla Twojego dziecka</div>
-    <div style="font-size:14px;font-weight:600;color:rgba(255,255,255,.85);line-height:1.65;min-height:48px" id="ldMsg">Analizujemy wiek i etap rozwojowy…</div>
-    <div style="margin:26px 0 8px;height:10px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden">
-      <div id="ldBar" style="height:100%;background:#fff;border-radius:5px;width:0%;transition:width .7s ease"></div>
-    </div>
-    <div style="font-size:12px;font-weight:800;color:rgba(255,255,255,.6)" id="ldPct">0%</div>
-    <div style="margin-top:28px;background:rgba(255,255,255,.15);border-radius:16px;padding:16px 18px;border:2px solid rgba(255,255,255,.2);text-align:left">
-      <div style="font-size:10px;font-weight:900;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Czy wiesz, że…</div>
-      <div style="font-size:13px;font-weight:600;color:#fff;line-height:1.7;min-height:64px" id="ldFact">Pierwsze 5 lat życia to okres, w którym mózg dziecka tworzy ponad milion nowych połączeń nerwowych na sekundę.</div>
+  <div style="width:100%;max-width:340px;padding:0 28px;text-align:center">
+    <div style="font-size:52px;margin-bottom:24px;animation:pulse2 2s ease-in-out infinite">🌱</div>
+    <div style="font-size:21px;font-weight:900;color:#fff;line-height:1.4;margin-bottom:32px" id="ldTitle">Przygotowujemy plan<br>dla Twojego dziecka</div>
+    <div style="height:10px;background:rgba(255,255,255,.25);border-radius:5px;overflow:hidden">
+      <div id="ldBar" style="height:100%;background:#fff;border-radius:5px;width:0%;transition:width .5s ease"></div>
     </div>
   </div>
 </div>
@@ -846,12 +841,19 @@ function startJourney(){
   });
 }
 
+function chkName(){
+  const name = document.getElementById('childName')?.value.trim()||'';
+  const ageSelected = document.querySelector('.ab.on');
+  document.getElementById('ob1').disabled = !(name.length>=2 && ageSelected);
+}
+
 function pA(b,key){
   document.querySelectorAll('.ab').forEach(x=>x.classList.remove('on'));
   b.classList.add('on');
   selAge=b.querySelector('.ab-r').textContent;
   selAgeKey=key;
-  document.getElementById('ob1').disabled=false;
+  const name = document.getElementById('childName')?.value.trim()||'';
+  document.getElementById('ob1').disabled = name.length < 2;
   buildList('ch-list', challenges[key]||challenges.default, 'ob2');
   buildList('goal-list', goals[key]||goals.default, 'ob3');
 }
@@ -1040,53 +1042,17 @@ function renderCzyWiesz(){
   `;
 }
 function startLoad(){
+  const name = (document.getElementById('childName')?.value||'').trim();
+  const nameText = name ? `dla ${name}` : 'dla Twojego dziecka';
+  document.getElementById('ldTitle').innerHTML = `Przygotowujemy plan<br>${nameText}`;
+
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   document.getElementById('sload').classList.add('on');
 
-  const steps=[
-    {pct:8,  msg:'Analizujemy wiek i etap rozwojowy…'},
-    {pct:22, msg:'Dopasowujemy trudności do Twojej sytuacji…'},
-    {pct:38, msg:'Dobieramy cele rozwojowe dla Twojego dziecka…'},
-    {pct:52, msg:'Układamy kolejność tygodni i etapów…'},
-    {pct:65, msg:'Dobieramy zadania neurobiologiczne…'},
-    {pct:78, msg:'Sprawdzamy spójność całego programu…'},
-    {pct:90, msg:'Personalizujemy treści i wskazówki…'},
-    {pct:100,msg:'Program gotowy! 🎉'},
-  ];
-  const facts=[
-    'Pierwsze 5 lat życia to okres, w którym mózg dziecka tworzy ponad milion nowych połączeń nerwowych na sekundę.',
-    'Dzieci, które słyszą więcej słów w pierwszych 3 latach życia, osiągają lepsze wyniki w szkole — niezależnie od poziomu wykształcenia rodziców.',
-    'Regularność jest ważniejsza niż intensywność. Małe działania wykonywane codziennie zmieniają mózg trwalej niż okazjonalne duże interwencje.',
-    'Ko-regulacja emocjonalna — czyli uspokajanie dziecka przez spokój rodzica — to jeden z najskuteczniejszych sposobów budowania odporności psychicznej.',
-    'Dzieci, które mają poczucie wpływu na swoje życie, rzadziej walczą o kontrolę i rzadziej mają wybuchy złości.',
-    'Zabawa bez sterowania przez dorosłego to ćwiczenie kory przedczołowej — tej samej części mózgu, która odpowiada za koncentrację i samoregulację.',
-  ];
-
-  const bar=document.getElementById('ldBar');
-  const pctEl=document.getElementById('ldPct');
-  const msgEl=document.getElementById('ldMsg');
-  const factEl=document.getElementById('ldFact');
-
-  let si=0, fi=0;
-  const totalMs=13000;
-  const stepMs=totalMs/steps.length;
-
-  // cycle facts every ~3.5s
-  const factInt=setInterval(()=>{
-    factEl.style.opacity='0';
-    setTimeout(()=>{fi=(fi+1)%facts.length;factEl.textContent=facts[fi];factEl.style.opacity='1'},350);
-  },3500);
-
-  function nextStep(){
-    if(si>=steps.length){clearInterval(factInt);setTimeout(()=>{renderReveal();showReveal();},600);return;}
-    const s=steps[si++];
-    bar.style.width=s.pct+'%';
-    pctEl.textContent=s.pct+'%';
-    msgEl.style.opacity='0';
-    setTimeout(()=>{msgEl.textContent=s.msg;msgEl.style.opacity='1'},200);
-    setTimeout(nextStep, stepMs);
-  }
-  nextStep();
+  const bar = document.getElementById('ldBar');
+  bar.style.width = '0%';
+  setTimeout(()=>{ bar.style.width='100%'; bar.style.transition='width 2.8s ease'; }, 100);
+  setTimeout(()=>{ renderReveal(); showReveal(); }, 3200);
 }
 
 // ── PLAN REVEAL ──
