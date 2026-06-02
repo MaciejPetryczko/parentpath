@@ -69,7 +69,24 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);margi
 .other-in{width:100%;padding:10px 12px;border:2px solid var(--br);border-radius:8px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:var(--ink);background:var(--bg);outline:none;margin-top:8px;display:none}
 .mb2.on .other-in{display:block}
 .other-in:focus{border-color:var(--B)}
-/* PLAN REVEAL */
+/* JOURNEY SCREEN */
+.jrn-line{position:absolute;left:19px;top:0;bottom:0;width:3px;background:var(--br);border-radius:2px;z-index:0}
+.jrn-line-fill{position:absolute;left:0;top:0;width:100%;background:var(--G);border-radius:2px;transition:height 2.5s ease;height:0%}
+.jrn-step{display:flex;gap:16px;align-items:flex-start;position:relative;z-index:1;opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease}
+.jrn-step.vis{opacity:1;transform:translateY(0)}
+.jrn-node{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:3px solid;position:relative;z-index:2;background:var(--w)}
+.jrn-node.act{background:var(--G);border-color:var(--Gd);box-shadow:0 0 0 5px rgba(88,204,2,.18)}
+.jrn-node.nxt{background:var(--w);border-color:var(--br)}
+.jrn-node.far{background:var(--bg);border-color:var(--br)}
+.jrn-body{flex:1;padding-bottom:28px}
+.jrn-tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.jrn-title{font-size:16px;font-weight:900;color:var(--ink);margin-bottom:4px;line-height:1.3}
+.jrn-desc{font-size:13px;font-weight:600;color:var(--i2);line-height:1.65}
+.jrn-badge{display:inline-flex;align-items:center;gap:5px;margin-top:8px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800}
+.jrn-years{background:linear-gradient(135deg,#1B1B2F,#16213E);border-radius:16px;padding:16px 18px;margin-top:4px;border:2px solid rgba(88,204,2,.3)}
+.jrn-years-title{font-size:14px;font-weight:900;color:#fff;margin-bottom:6px}
+.jrn-ages{display:flex;gap:6px;flex-wrap:wrap}
+.jrn-age{padding:5px 11px;border-radius:20px;font-size:12px;font-weight:800;background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);border:1.5px solid rgba(255,255,255,.15)}
 .pr-hero{background:linear-gradient(160deg,#1B1B2F 0%,#16213E 100%);border-radius:20px;padding:22px;margin-bottom:16px;position:relative;overflow:hidden}
 .pr-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(88,204,2,.12);pointer-events:none}
 .pr-hero::after{content:'';position:absolute;bottom:-30px;left:-30px;width:120px;height:120px;border-radius:50%;background:rgba(28,176,246,.1);pointer-events:none}
@@ -353,7 +370,83 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--ink);margi
     </div>
 
   </div>
-  <button class="btn bg" onclick="nO(1)">STWÓRZ MÓJ PLAN →</button>
+  <button class="btn bg" onclick="nO('0b');startJourney()">STWÓRZ MÓJ PLAN →</button>
+</div>
+
+<!-- KROK 0b: Droga rodzica -->
+<div class="os" id="o0b">
+  <div style="margin-bottom:18px">
+    <div style="font-size:22px;font-weight:900;color:var(--ink);line-height:1.3;margin-bottom:6px">Jak wygląda<br>Twoja droga z nami?</div>
+    <div style="font-size:14px;font-weight:600;color:var(--i2);line-height:1.6">Zanim zaczniemy, pokaż Ci jak działa ParentPath od pierwszego dnia do lat przyszłości.</div>
+  </div>
+
+  <div style="position:relative;padding-left:0" id="jrn-wrap">
+    <div class="jrn-line"><div class="jrn-line-fill" id="jrn-fill"></div></div>
+
+    <div class="jrn-step" id="js0" style="padding-left:56px">
+      <div class="jrn-node act" style="position:absolute;left:0;top:0">🎯</div>
+      <div class="jrn-body">
+        <div class="jrn-tag" style="color:var(--G)">Teraz · kilka minut</div>
+        <div class="jrn-title">Twój indywidualny plan</div>
+        <div class="jrn-desc">Odpowiadasz na kilka pytań o wiek i potrzeby dziecka. Na tej podstawie tworzymy plan dopasowany tylko do Waszej sytuacji.</div>
+        <div class="jrn-badge" style="background:var(--Gb);color:var(--Gd);border:2px solid var(--Gd)">✓ Właśnie tu jesteś</div>
+      </div>
+    </div>
+
+    <div class="jrn-step" id="js1" style="padding-left:56px">
+      <div class="jrn-node nxt" style="position:absolute;left:0;top:0">📋</div>
+      <div class="jrn-body">
+        <div class="jrn-tag" style="color:var(--B)">Tydzień 1–4 · Etap 1</div>
+        <div class="jrn-title">Pierwszy cel rozwojowy</div>
+        <div class="jrn-desc">Codziennie 2–3 konkretne zadania. Każde z wyjaśnieniem co się dzieje w mózgu dziecka i co zobaczysz w praktyce. Żadnych domysłów.</div>
+        <div class="jrn-badge" style="background:var(--Bs);color:var(--Bd);border:2px solid var(--Bd)">~15 min dziennie</div>
+      </div>
+    </div>
+
+    <div class="jrn-step" id="js2" style="padding-left:56px">
+      <div class="jrn-node nxt" style="position:absolute;left:0;top:0">✦</div>
+      <div class="jrn-body">
+        <div class="jrn-tag" style="color:var(--P)">Po każdym etapie</div>
+        <div class="jrn-title">Sprawdzenie postępu</div>
+        <div class="jrn-desc">Krótki test obserwacyjny. Widzisz co się zmieniło. Plan dostosowuje się do tego, co faktycznie zadziałało u Twojego dziecka.</div>
+      </div>
+    </div>
+
+    <div class="jrn-step" id="js3" style="padding-left:56px">
+      <div class="jrn-node nxt" style="position:absolute;left:0;top:0">🔓</div>
+      <div class="jrn-body">
+        <div class="jrn-tag" style="color:var(--O)">Etap 2, 3 i kolejne...</div>
+        <div class="jrn-title">Każdy etap buduje na poprzednim</div>
+        <div class="jrn-desc">Samodzielność otwiera odporność emocjonalną. Odporność otwiera pewność siebie. To sekwencja zaprojektowana przez specjalistów, nie przypadkowy zestaw ćwiczeń.</div>
+        <div class="jrn-badge" style="background:var(--Ob);color:var(--Od);border:2px solid var(--Od)">🔒 Odblokuje się po etapie 1</div>
+      </div>
+    </div>
+
+    <div class="jrn-step" id="js4" style="padding-left:56px">
+      <div class="jrn-node far" style="position:absolute;left:0;top:0">🌱</div>
+      <div class="jrn-body">
+        <div class="jrn-tag" style="color:var(--i3)">Lata współpracy</div>
+        <div class="jrn-title">Plan rośnie razem z dzieckiem</div>
+        <div class="jrn-desc">Gdy dziecko dorośnie, plan się zmienia. Nowe wyzwania, nowe narzędzia, nowe etapy. Jesteśmy z Tobą od pierwszych kroków do pierwszych poważnych rozmów.</div>
+        <div class="jrn-years">
+          <div class="jrn-years-title">Programy dla każdego wieku</div>
+          <div class="jrn-ages">
+            <span class="jrn-age">0–2 l.</span>
+            <span class="jrn-age">3–5 l.</span>
+            <span class="jrn-age">6–8 l.</span>
+            <span class="jrn-age">9–11 l.</span>
+            <span class="jrn-age">12–13 l.</span>
+            <span class="jrn-age">14+ l.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sp"></div>
+  <button class="btn bg" onclick="nO(1)">ROZUMIEM, ZACZYNAMY →</button>
+  <button class="btn bk" onclick="nO(0)">← Wróć</button>
 </div>
 
 <!-- KROK 1: Wiek -->
@@ -728,14 +821,29 @@ const devInfo={
 };
 
 let selAge='', selAgeKey='', selChallenges=[], selGoals=[];
-const ops=[0,17,34,51,75,100];
+const ops={0:0,'0b':0,1:17,2:34,3:51,4:75,5:100};
 
 function nO(n){
   document.querySelectorAll('.os').forEach(s=>s.classList.remove('on'));
   document.getElementById('o'+n).classList.add('on');
-  document.getElementById('opf').style.width=ops[n]+'%';
+  document.getElementById('opf').style.width=(ops[n]||0)+'%';
   if(n===4) buildPers();
   window.scrollTo(0,0);
+}
+
+function startJourney(){
+  // reset
+  document.querySelectorAll('.jrn-step').forEach(s=>s.classList.remove('vis'));
+  document.getElementById('jrn-fill').style.height='0%';
+  // animate steps in sequence
+  const steps=['js0','js1','js2','js3','js4'];
+  const fillPcts=[0,25,50,72,92];
+  steps.forEach((id,i)=>{
+    setTimeout(()=>{
+      document.getElementById(id).classList.add('vis');
+      document.getElementById('jrn-fill').style.height=fillPcts[i]+'%';
+    }, i*380);
+  });
 }
 
 function pA(b,key){
